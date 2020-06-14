@@ -1,4 +1,5 @@
 ﻿using GuardedActionsSample.Actions.Main.Interfaces;
+using GuardedActionsSample.Commands.Main.Interfaces;
 using GuardedActionsSample.Factories.Interfaces;
 using GuardedActionsSample.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,9 +10,8 @@ namespace GuardedActionsSample.Factories
     {
         public Download Create(string url)
         {
-            var downloadUrlAction = Startup.Services.GetService<IDownloadUrlAction>();
-            var download = new Download(url, downloadUrlAction);
-            downloadUrlAction.RegisterDataContext(download);
+            var downloadCommandBuilder = Startup.Services.GetService<IDownloadCommandBuilder>();
+            var download = new Download(url, downloadCommandBuilder);
             return download;
         }
     }

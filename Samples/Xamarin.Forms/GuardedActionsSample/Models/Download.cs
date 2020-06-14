@@ -1,4 +1,6 @@
-﻿using GuardedActionsSample.Actions.Main.Interfaces;
+﻿using System;
+using AsyncAwaitBestPractices.MVVM;
+using GuardedActionsSample.Commands.Main.Interfaces;
 
 namespace GuardedActionsSample.Models
 {
@@ -7,12 +9,14 @@ namespace GuardedActionsSample.Models
         private string _errorMessage;
         private bool _isDownloaded;
 
-        public Download(string url, IDownloadUrlAction downloadAction)
+        public Download(string url, IDownloadCommandBuilder downloadCommandBuilder)
         {
-            Url = url;
+            Url = url ?? throw new ArgumentNullException(nameof(url));
 
-            DownloadAction = downloadAction;
-            DownloadAction?.RegisterDataContext(this);
+            if (downloadCommandBuilder == null)
+                throw new ArgumentNullException(nameof(downloadCommandBuilder));
+
+            DownloadCommand = downloadCommandBuilder.RegisterDataContext(this).BuildCommand();
         }
 
         public string ErrorMessage
@@ -31,6 +35,6 @@ namespace GuardedActionsSample.Models
 
         public string Url { get; }
 
-        public IDownloadUrlAction DownloadAction { get; }
+        public IAsyncCommand DownloadCommand { get; }
     }
 }

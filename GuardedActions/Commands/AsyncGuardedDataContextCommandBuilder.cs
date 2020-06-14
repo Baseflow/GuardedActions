@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
 using GuardedActions.Commands.Interfaces;
 
@@ -17,6 +18,14 @@ namespace GuardedActions.Commands
 
             DataContext = dataContext;
             return this;
+        }
+
+        public new IAsyncCommand<TCommandParameter> BuildCommand()
+        {
+            if (DataContext == null)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(BuildCommand)}<{nameof(TCommandParameter)}>(): {nameof(DataContext)} cannot be null make sure to register the {nameof(DataContext)} by calling the {nameof(RegisterDataContext)} method before you call the {nameof(BuildCommand)} method.");
+
+            return base.BuildCommand();
         }
 
         protected override Task BuildCommandBody(IAsyncCommand<TCommandParameter> command, TCommandParameter model)
@@ -51,6 +60,14 @@ namespace GuardedActions.Commands
 
             DataContext = dataContext;
             return this;
+        }
+
+        public new IAsyncCommand BuildCommand()
+        {
+            if (DataContext == null)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(BuildCommand)}(): {nameof(DataContext)} cannot be null make sure to register the {nameof(DataContext)} by calling the {nameof(RegisterDataContext)} method before you call the {nameof(BuildCommand)} method.");
+
+            return base.BuildCommand();
         }
 
         protected override Task BuildCommandBody(IAsyncCommand command)
