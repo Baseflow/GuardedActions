@@ -5,6 +5,19 @@ namespace GuardedActions.ExceptionHandlers.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
     public class ExceptionHandlerForAttribute : Attribute
     {
+        public ExceptionHandlerForAttribute(int priorityLevel, bool skipDefaultHandlers, params Type[] typesToHandleOn)
+        {
+            PriorityLevel = priorityLevel;
+            SkipDefaultHandlers = skipDefaultHandlers;
+            TypesToHandleOn = typesToHandleOn;
+        }
+
+        public ExceptionHandlerForAttribute(bool skipDefaultHandlers, params Type[] typesToHandleOn)
+        {
+            SkipDefaultHandlers = skipDefaultHandlers;
+            TypesToHandleOn = typesToHandleOn;
+        }
+
         public ExceptionHandlerForAttribute(int priorityLevel, params Type[] typesToHandleOn)
         {
             PriorityLevel = priorityLevel;
@@ -18,6 +31,7 @@ namespace GuardedActions.ExceptionHandlers.Attributes
         }
 
         public int PriorityLevel { get; }
+        public bool SkipDefaultHandlers { get; }
         public Type[] TypesToHandleOn { get; }
     }
 }

@@ -38,17 +38,20 @@ namespace GuardedActions.ExceptionGuards
         {
             try
             {
-                await job();
+                if (job == null)
+                    throw new InvalidOperationException($"{GetType().FullName}.{nameof(Guard)}(): The {nameof(job)} provided cannot be null.");
+
+                await job().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                await HandleException(sender, exception);
+                await HandleException(sender, exception).ConfigureAwait(false);
             }
             finally
             {
                 if (onFinally != null)
                 {
-                    await onFinally();
+                    await onFinally().ConfigureAwait(false);
                 }
             }
         }
@@ -58,17 +61,20 @@ namespace GuardedActions.ExceptionGuards
             TResult result = default;
             try
             {
-                result = await job();
+                if (job == null)
+                    throw new InvalidOperationException($"{GetType().FullName}.{nameof(Guard)}<{nameof(TResult)}>(): The {nameof(job)} provided cannot be null.");
+
+                result = await job().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                await HandleException(sender, exception);
+                await HandleException(sender, exception).ConfigureAwait(false);
             }
             finally
             {
                 if (onFinally != null)
                 {
-                    await onFinally();
+                    await onFinally().ConfigureAwait(false);
                 }
             }
 
@@ -80,70 +86,90 @@ namespace GuardedActions.ExceptionGuards
             if (ExceptionHandlers?.Any() != true)
                 return;
 
-            var commonExceptionHandler = ExceptionHandlers.Find(h => h is CommonExceptionHandler);
-            var handlers = new List<IExceptionHandler>();
+            GetHandlers(sender, exception, out var fallbackHandler, out var defaultHandlers, out var customHandlers, out var skipDefaultHandlers);
 
-            foreach (var handler in ExceptionHandlers.Where(h => h != commonExceptionHandler && HandlerShouldBePossibleToHandleException(h, exception)))
+            var exceptionHandlingAction = _exceptionHandlingActionFactory.Create(exception);
+
+            foreach (var exceptionHandler in DetermineHandlersToUse(fallbackHandler, defaultHandlers, customHandlers, skipDefaultHandlers))
             {
+                await exceptionHandler.Handle(exceptionHandlingAction).ConfigureAwait(false);
+
+                if (exceptionHandlingAction.HandlingShouldFinish)
+                    break;
+            }
+        }
+
+        private void GetHandlers(object sender, Exception exception, out IExceptionHandler fallbackHandler, out List<IExceptionHandler> defaultHandlers, out List<IExceptionHandler> customHandlers, out bool skipDefaultHandlers)
+        {
+            fallbackHandler = null;
+            defaultHandlers = new List<IExceptionHandler>();
+            customHandlers = new List<IExceptionHandler>();
+            skipDefaultHandlers = false;
+
+            var customHandlersDictionary = new SortedDictionary<int, IList<IExceptionHandler>>();
+
+            foreach (var handler in ExceptionHandlers.Where(h => HandlerShouldBePossibleToHandleException(h, exception)))
+            {
+                if (handler.GetType().FullName == typeof(GeneralExceptionHandler).FullName)
+                {
+                    fallbackHandler = handler;
+                    continue;
+                }
+
+                var defaultHandlerAttribute = handler.GetAttribute<DefaultExceptionHandlerAttribute>();
+                if (defaultHandlerAttribute != null)
+                {
+                    defaultHandlers.Add(handler);
+                    continue;
+                }
+
                 var handlingOnAttribute = handler.GetAttribute<ExceptionHandlerForAttribute>();
                 if (handlingOnAttribute != null)
                 {
                     if (!handlingOnAttribute.TypesToHandleOn.Any(t => t.IsInstanceOfType(sender)))
-                    {
                         continue;
-                    }
-                }
-                else if (handler.GetAttribute<DefaultExceptionHandlerAttribute>() == null)
-                {
-                    if (await handler.CanHandle(exception))
-                    {
-                        handlers.Add(handler);
-                    }
 
-                    continue;
-                }
+                    if (handlingOnAttribute.SkipDefaultHandlers)
+                        skipDefaultHandlers = true;
 
-                if (await handler.CanHandle(exception))
-                    handlers.Add(handler);
+                    customHandlersDictionary.AddOrCreate(handlingOnAttribute.PriorityLevel, handler);
+                }
             }
 
-            var exceptionHandlingAction = _exceptionHandlingActionFactory.Create(exception);
-
-            if (!handlers.Any())
+            foreach (var customHandlersDictionaryEntry in customHandlersDictionary.Reverse())
             {
-                if (commonExceptionHandler != null)
-                {
-                    await commonExceptionHandler.Handle(exceptionHandlingAction);
-                }
-                //TODO probably we would like to throw if exception should not be handled
-                return;
+                customHandlers.AddRange(customHandlersDictionaryEntry.Value);
             }
+        }
 
-            var handlersToUse = handlers.ToList();
-            var customHandlers = handlers.Where(h => h.GetAttribute<DefaultExceptionHandlerAttribute>() == null)
-                .ToList();
+        private static List<IExceptionHandler> DetermineHandlersToUse(IExceptionHandler fallbackHandler, List<IExceptionHandler> defaultHandlers, List<IExceptionHandler> customHandlers, bool skipDefaultHandlers)
+        {
+            var handlersToUse = new List<IExceptionHandler>();
 
-            if (customHandlers.Any())
+            if (customHandlers.Count == 0 && defaultHandlers.Count == 0)
             {
-                handlersToUse = customHandlers.OrderBy(h => h.GetAttribute<ExceptionHandlerForAttribute>()?.PriorityLevel ?? 0).ToList();
+                handlersToUse.Add(fallbackHandler);
             }
-
-            foreach (var exceptionHandler in handlersToUse)
+            else
             {
-                if (exceptionHandlingAction.HandlingShouldFinish)
+                if (!skipDefaultHandlers)
                 {
-                    return;
+                    if (defaultHandlers.Count > 0)
+                        handlersToUse.AddRange(defaultHandlers);
+                    else
+                        handlersToUse.Add(fallbackHandler);
                 }
 
-                await exceptionHandler.Handle(exceptionHandlingAction);
+                handlersToUse.AddRange(customHandlers);
             }
+
+            return handlersToUse;
         }
 
         private bool HandlerShouldBePossibleToHandleException(IExceptionHandler exceptionHandler, Exception exception)
         {
             var type = GetExceptionTypeHandledByHandler(exceptionHandler);
-            var isInstanceOfType = type.IsInstanceOfType(exception);
-            return isInstanceOfType;
+            return type.IsInstanceOfType(exception);
         }
 
         public void AssignContextToValidExceptionHandlers(object context)

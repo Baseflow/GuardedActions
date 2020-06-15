@@ -1,9 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using GuardedActions.ExceptionHandlers;
 using GuardedActions.ExceptionHandlers.Attributes;
 using GuardedActions.ExceptionHandlers.Contracts;
 
-namespace GuardedActions.ExceptionHandlers.Defaults
+namespace GuardedActionsSample.ExceptionHandlers.Defaults
 {
     //TODO Think of a good implementation.
     [DefaultExceptionHandler]
@@ -20,7 +21,6 @@ namespace GuardedActions.ExceptionHandlers.Defaults
         public override Task Handle(IExceptionHandlingAction<NotImplementedException> exceptionHandlingAction)
         {
             //await _userDialogs.AlertAsync("This is not implemented... yet.", "Coming soon™", "Ok, I will wait");
-            exceptionHandlingAction.HandlingShouldFinish = true;
             return Task.CompletedTask;
         }
     }

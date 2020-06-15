@@ -13,9 +13,4 @@ namespace GuardedActions.ExceptionHandlers.Contracts
     {
         Task Handle(IExceptionHandlingAction<TException> exceptionHandlingAction);
     }
-
-    public interface IExceptionHandlingAction
-    {
-        bool HandlingShouldFinish { get; set; }
-    }
 }
