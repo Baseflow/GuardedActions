@@ -6,10 +6,9 @@ using GuardedActions.Commands.Contracts;
 using GuardedActions.ExceptionHandlers;
 using GuardedActions.ExceptionHandlers.Contracts;
 using GuardedActions.Extensions;
-using GuardedActions.ExceptionGuards.Contracts;
 using GuardedActions.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using GuardedActions.ExceptionGuards;
+using GuardedActions.Commands;
 
 namespace GuardedActions.IoC
 {

@@ -7,9 +7,9 @@ using GuardedActions.ExceptionHandlers.Attributes;
 using GuardedActions.ExceptionHandlers.Defaults;
 using GuardedActions.ExceptionHandlers.Contracts;
 using GuardedActions.Extensions;
-using GuardedActions.ExceptionGuards.Contracts;
+using GuardedActions.Commands.Contracts;
 
-namespace GuardedActions.ExceptionGuards
+namespace GuardedActions.Commands
 {
     public class ExceptionGuard : IExceptionGuard
     {

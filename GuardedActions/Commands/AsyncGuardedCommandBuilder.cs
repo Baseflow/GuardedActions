@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
 using GuardedActions.Commands.Contracts;
 using GuardedActions.Extensions;
-using GuardedActions.ExceptionGuards.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GuardedActions.Commands

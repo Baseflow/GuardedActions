@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GuardedActions.Commands.Actions.Contracts;
+using GuardedActions.Commands.Contracts;
 using GuardedActions.Extensions;
-using GuardedActions.ExceptionGuards.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GuardedActions.Commands.Actions

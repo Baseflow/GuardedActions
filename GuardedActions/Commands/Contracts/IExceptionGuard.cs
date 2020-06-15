@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GuardedActions.ExceptionHandlers.Contracts;
 
-namespace GuardedActions.ExceptionGuards.Contracts
+namespace GuardedActions.Commands.Contracts
 {
     public interface IExceptionGuard
     {
