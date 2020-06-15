@@ -1,6 +1,5 @@
-﻿using GuardedActionsSample.Actions.Main.Interfaces;
-using GuardedActionsSample.Commands.Main.Interfaces;
-using GuardedActionsSample.Factories.Interfaces;
+﻿using GuardedActionsSample.Commands.Contracts;
+using GuardedActionsSample.Factories.Contracts;
 using GuardedActionsSample.Models;
 using Microsoft.Extensions.DependencyInjection;
 

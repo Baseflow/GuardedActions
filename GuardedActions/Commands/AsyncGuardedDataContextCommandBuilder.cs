@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
-using GuardedActions.Commands.Interfaces;
+using GuardedActions.Commands.Contracts;
 
 namespace GuardedActions.Commands
 {

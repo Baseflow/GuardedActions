@@ -3,7 +3,7 @@ using System.Reflection;
 using GuardedActions;
 using GuardedActions.Extensions;
 using GuardedActionsSample.Factories;
-using GuardedActionsSample.Factories.Interfaces;
+using GuardedActionsSample.Factories.Contracts;
 using GuardedActionsSample.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

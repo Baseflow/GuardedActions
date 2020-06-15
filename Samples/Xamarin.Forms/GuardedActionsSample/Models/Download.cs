@@ -1,6 +1,6 @@
 ﻿using System;
 using AsyncAwaitBestPractices.MVVM;
-using GuardedActionsSample.Commands.Main.Interfaces;
+using GuardedActionsSample.Commands.Contracts;
 
 namespace GuardedActionsSample.Models
 {

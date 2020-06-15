@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using GuardedActions.ExceptionHandlers;
 using GuardedActions.ExceptionHandlers.Attributes;
-using GuardedActions.ExceptionHandlers.Interfaces;
-using GuardedActionsSample.Actions.Main.Interfaces;
+using GuardedActions.ExceptionHandlers.Contracts;
+using GuardedActionsSample.Commands.Actions.Contracts;
 using GuardedActionsSample.Models;
 
 namespace GuardedActionsSample.ErrorHandlers.FileManagement

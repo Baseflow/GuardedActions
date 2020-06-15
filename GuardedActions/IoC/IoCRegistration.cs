@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GuardedActions.Commands.Interfaces;
+using GuardedActions.Commands.Actions.Contracts;
+using GuardedActions.Commands.Contracts;
 using GuardedActions.ExceptionHandlers;
-using GuardedActions.ExceptionHandlers.Interfaces;
+using GuardedActions.ExceptionHandlers.Contracts;
 using GuardedActions.Extensions;
-using GuardedActions.Interfaces;
+using GuardedActions.ExceptionGuards.Contracts;
 using GuardedActions.Utils;
 using Microsoft.Extensions.DependencyInjection;
+using GuardedActions.ExceptionGuards;
 
 namespace GuardedActions.IoC
 {

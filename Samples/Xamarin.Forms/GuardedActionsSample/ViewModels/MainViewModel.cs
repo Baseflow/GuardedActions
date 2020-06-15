@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using GuardedActionsSample.Commands.Main.Interfaces;
+using GuardedActionsSample.Commands.Contracts;
 using GuardedActionsSample.Models;
 
 namespace GuardedActionsSample.ViewModels

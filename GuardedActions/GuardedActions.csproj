@@ -3,30 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Commands\Interfaces\" />
-    <Folder Include="ExceptionHandlers\" />
-    <Folder Include="ExceptionHandlers\Interfaces\" />
-    <Folder Include="ExceptionHandlers\Defaults\" />
-    <Folder Include="ExceptionHandlers\Attributes\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Utils\" />
-  </ItemGroup>
+    
   <ItemGroup>
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.5" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Ioc\ActionsIoCRegistration.cs" />
-    <Compile Remove="Ioc\ExceptionGuardRegistration.cs" />
-    <Compile Remove="Ioc\ExceptionHandlersIoCRegistration.cs" />
-    <Compile Remove="Ioc\CommandsIoCRegistration.cs" />
-    <Compile Remove="Ioc\AssemblyIoCRegistration.cs" />
-  </ItemGroup>
+    
   <ItemGroup>
     <None Remove="IoC\.DS_Store" />
   </ItemGroup>
+    
 </Project>

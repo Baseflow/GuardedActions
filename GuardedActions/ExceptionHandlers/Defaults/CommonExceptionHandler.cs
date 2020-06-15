@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using GuardedActions.ExceptionHandlers.Attributes;
-using GuardedActions.ExceptionHandlers.Interfaces;
+using GuardedActions.ExceptionHandlers.Contracts;
 
 namespace GuardedActions.ExceptionHandlers.Defaults
 {

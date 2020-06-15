@@ -1,5 +1,5 @@
 ﻿using System;
-using GuardedActions.ExceptionHandlers.Interfaces;
+using GuardedActions.ExceptionHandlers.Contracts;
 
 namespace GuardedActions.ExceptionHandlers
 {
