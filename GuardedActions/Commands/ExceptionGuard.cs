@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GuardedActions.ExceptionHandlers.Attributes;
 using GuardedActions.ExceptionHandlers.Defaults;
 using GuardedActions.ExceptionHandlers.Contracts;
+using GuardedActions.ExceptionHandlers.Extensions;
 using GuardedActions.Extensions;
 using GuardedActions.Commands.Contracts;
 
@@ -17,6 +18,7 @@ namespace GuardedActions.Commands
         public ExceptionGuard(IEnumerable<IExceptionHandler> handlers, IExceptionHandlingActionFactory exceptionHandlingActionFactory)
         {
             _exceptionHandlingActionFactory = exceptionHandlingActionFactory;
+
             ExceptionHandlers.AddRange(handlers);
         }
 
@@ -81,14 +83,14 @@ namespace GuardedActions.Commands
 
             GetHandlers(sender, exception, out var fallbackHandler, out var defaultHandlers, out var customHandlers, out var skipDefaultHandlers);
 
-            var exceptionHandlingAction = _exceptionHandlingActionFactory.Create(exception);
-
             var context = GetContextFromSender(sender);
+
+            var exceptionHandlingAction = _exceptionHandlingActionFactory.Create(exception, context);
 
             foreach (var exceptionHandler in DetermineHandlersToUse(fallbackHandler, defaultHandlers, customHandlers, skipDefaultHandlers))
             {
-                if (context != null)
-                    AssignContextIfValid(exceptionHandler, context);
+                if (!await exceptionHandler.CanHandle(exceptionHandlingAction).ConfigureAwait(false))
+                    continue;
 
                 await exceptionHandler.Handle(exceptionHandlingAction).ConfigureAwait(false);
 
@@ -106,7 +108,7 @@ namespace GuardedActions.Commands
 
             var customHandlersDictionary = new SortedDictionary<int, IList<IExceptionHandler>>();
 
-            foreach (var handler in ExceptionHandlers.Where(h => HandlerShouldBePossibleToHandleException(h, exception)))
+            foreach (var handler in ExceptionHandlers.Where(h => h.Implements(exception)))
             {
                 if (handler.GetType().FullName == typeof(GeneralExceptionHandler).FullName)
                 {
@@ -162,39 +164,6 @@ namespace GuardedActions.Commands
             }
 
             return handlersToUse;
-        }
-
-        private bool HandlerShouldBePossibleToHandleException(IExceptionHandler exceptionHandler, Exception exception)
-        {
-            var type = GetExceptionTypeHandledByHandler(exceptionHandler);
-            return type.IsInstanceOfType(exception);
-        }
-
-        private static void AssignContextIfValid(IExceptionHandler exceptionHandler, object context)
-        {
-            var arguments = exceptionHandler.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GenericTypeArguments.Length == 2)?.GenericTypeArguments;
-            if (arguments != null)
-            {
-                var contextArgument = arguments[1];
-                if (contextArgument.IsInstanceOfType(context))
-                {
-                    var propertyInfo = typeof(IContextExceptionHandler<,>)
-                        .MakeGenericType(arguments)
-                        .GetProperty(nameof(IContextExceptionHandler<Exception, object>.Context));
-
-                    var method = typeof(WeakReference<>)
-                        .MakeGenericType(contextArgument)
-                        .GetMethod(nameof(WeakReference<Exception>.SetTarget));
-
-                    var weakContext = propertyInfo.GetValue(exceptionHandler);
-                    method.Invoke(weakContext, new[] { context });
-                }
-            }
-        }
-
-        private static Type? GetExceptionTypeHandledByHandler(IExceptionHandler exceptionHandler)
-        {
-            return exceptionHandler.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)?.GenericTypeArguments?[0];
         }
 
         private static object? GetContextFromSender(object sender)

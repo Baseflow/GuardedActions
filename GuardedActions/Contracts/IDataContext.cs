@@ -1,6 +1,6 @@
 ﻿namespace GuardedActions.Contracts
 {
-    public interface IDataContext<TDataContext>
+    public interface IDataContext<out TDataContext>
     {
         TDataContext DataContext { get; }
     }

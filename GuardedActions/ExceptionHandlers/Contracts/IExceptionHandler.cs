@@ -5,17 +5,22 @@ namespace GuardedActions.ExceptionHandlers.Contracts
 {
     public interface IExceptionHandler
     {
-        Task Handle(IExceptionHandlingAction exception);
-        Task<bool> CanHandle(Exception exception);
+        Task Handle(IExceptionHandlingAction exceptionHandlingAction);
+        Task<bool> CanHandle(IExceptionHandlingAction exceptionHandlingAction);
     }
 
-    public interface IExceptionHandler<in TException> : IExceptionHandler where TException : Exception
+    public interface IExceptionHandler<in TException> : IExceptionHandler
+        where TException : Exception
     {
+        Task<bool> CanHandle(IExceptionHandlingAction<TException> exceptionHandlingAction);
         Task Handle(IExceptionHandlingAction<TException> exceptionHandlingAction);
     }
 
-    public interface IContextExceptionHandler<TException, TContext> : IExceptionHandler<TException> where TException : Exception where TContext : class
+    public interface IExceptionHandler<in TException, TDataContext> : IExceptionHandler
+        where TException : Exception
+        where TDataContext : class
     {
-        WeakReference<TContext> Context { get; }
+        Task<bool> CanHandle(IExceptionHandlingAction<TException, TDataContext> exceptionHandlingAction);
+        Task Handle(IExceptionHandlingAction<TException, TDataContext> exceptionHandlingAction);
     }
 }

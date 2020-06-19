@@ -10,4 +10,12 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.5" />
   </ItemGroup>
     
+  <ItemGroup>
+    <Folder Include="ExceptionHandlers\Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="ExceptionHandlers\Extensions\ExceptionHandlerExtensions.cs">
+      <SubType></SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

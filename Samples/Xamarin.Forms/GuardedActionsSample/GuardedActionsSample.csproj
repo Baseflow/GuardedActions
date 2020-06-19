@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\..\GuardedActions\GuardedActions.csproj" />
   </ItemGroup>
     
+  <ItemGroup>
+    <Folder Include="Commands\Actions\ExceptionHandlers\" />
+    <Folder Include="ExceptionHandlers\Main\" />
+  </ItemGroup>
 </Project>
