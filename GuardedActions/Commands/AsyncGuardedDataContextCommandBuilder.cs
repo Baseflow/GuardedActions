@@ -7,7 +7,7 @@ namespace GuardedActions.Commands
 {
     public abstract class AsyncGuardedDataContextCommandBuilder<TDataContext, TCommandParameter> : AsyncGuardedCommandBuilder<TCommandParameter>, IAsyncGuardedDataContextCommandBuilder<TDataContext, TCommandParameter> where TDataContext : class
     {
-        protected TDataContext DataContext { get; private set; }
+        public TDataContext DataContext { get; private set; }
 
         public virtual IAsyncGuardedDataContextCommandBuilder<TDataContext, TCommandParameter> RegisterDataContext(TDataContext dataContext)
         {
@@ -49,7 +49,7 @@ namespace GuardedActions.Commands
 
     public abstract class AsyncGuardedDataContextCommandBuilder<TDataContext> : AsyncGuardedCommandBuilder, IAsyncGuardedDataContextCommandBuilder<TDataContext> where TDataContext : class
     {
-        protected TDataContext DataContext { get; private set; }
+        public TDataContext DataContext { get; private set; }
 
         public virtual IAsyncGuardedDataContextCommandBuilder<TDataContext> RegisterDataContext(TDataContext dataContext)
         {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GuardedActions.ExceptionHandlers;
 using GuardedActions.ExceptionHandlers.Attributes;
 using GuardedActions.ExceptionHandlers.Defaults;
 using GuardedActions.ExceptionHandlers.Contracts;
@@ -23,10 +22,10 @@ namespace GuardedActions.Commands
 
         public List<IExceptionHandler> ExceptionHandlers { get; } = new List<IExceptionHandler>();
 
-        private IExceptionHandler this[Type type]
-            => ExceptionHandlers.SingleOrDefault(h => h.GetType()
-                                                         .GetInterfaces()
-                                                         .FirstOrDefault(i => i == type) != null || h.GetType() == type);
+        private IExceptionHandler this[Type type] => ExceptionHandlers.SingleOrDefault(h =>
+            h.GetType().GetInterfaces().FirstOrDefault(i => i == type) != null ||
+            h.GetType() == type
+        );
 
         public async Task Guard(object sender, Func<Task> job, Func<Task> onFinally = null)
         {
@@ -84,8 +83,13 @@ namespace GuardedActions.Commands
 
             var exceptionHandlingAction = _exceptionHandlingActionFactory.Create(exception);
 
+            var context = GetContextFromSender(sender);
+
             foreach (var exceptionHandler in DetermineHandlersToUse(fallbackHandler, defaultHandlers, customHandlers, skipDefaultHandlers))
             {
+                if (context != null)
+                    AssignContextIfValid(exceptionHandler, context);
+
                 await exceptionHandler.Handle(exceptionHandlingAction).ConfigureAwait(false);
 
                 if (exceptionHandlingAction.HandlingShouldFinish)
@@ -166,26 +170,9 @@ namespace GuardedActions.Commands
             return type.IsInstanceOfType(exception);
         }
 
-        public void AssignContextToValidExceptionHandlers(object context)
-        {
-            var customHandlers = ExceptionHandlers
-                .Where(h => h.GetAttribute<DefaultExceptionHandlerAttribute>() == null)
-                .ToList();
-
-            foreach (var exceptionHandler in customHandlers)
-            {
-                AssignContextIfValid(exceptionHandler, context);
-            }
-        }
-
         private static void AssignContextIfValid(IExceptionHandler exceptionHandler, object context)
         {
-            var arguments = exceptionHandler.GetType()
-                .GetInterfaces()
-                .FirstOrDefault(
-                    i => i.IsGenericType
-                         && i.GenericTypeArguments.Length == 2)
-                ?.GenericTypeArguments;
+            var arguments = exceptionHandler.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GenericTypeArguments.Length == 2)?.GenericTypeArguments;
 
             if (arguments != null)
             {
@@ -207,14 +194,17 @@ namespace GuardedActions.Commands
             }
         }
 
-        private Type GetExceptionTypeHandledByHandler(IExceptionHandler exceptionHandler)
+        private static Type? GetExceptionTypeHandledByHandler(IExceptionHandler exceptionHandler)
         {
-            var arguments = exceptionHandler.GetType()
-                .GetInterfaces()
-                .FirstOrDefault(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)
-                ?.GenericTypeArguments;
+            return exceptionHandler.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GenericTypeArguments.Length == 1)?.GenericTypeArguments?[0];
+        }
 
-            return arguments?[0];
+        private static object? GetContextFromSender(object sender)
+        {
+            if (sender == null)
+                return null;
+
+            return sender.GetType().GetProperties().FirstOrDefault(f => f.Name == "DataContext")?.GetValue(sender);
         }
     }
 }

@@ -81,8 +81,6 @@ namespace GuardedActions.Commands
 
                     command.RaiseCanExecuteChanged();
 
-                    AssignContextToExceptionHandlers(this);
-
                     await ExecuteCommandAction().ConfigureAwait(false);
                 },
                 async () =>
@@ -125,11 +123,6 @@ namespace GuardedActions.Commands
         protected virtual bool CanExecute()
         {
             return CanExecuteFunction?.Invoke() != false;
-        }
-
-        protected virtual void AssignContextToExceptionHandlers(object context)
-        {
-            ExceptionGuard.AssignContextToValidExceptionHandlers(context);
         }
 
         public virtual void Dispose()
@@ -219,8 +212,6 @@ namespace GuardedActions.Commands
 
                     command.RaiseCanExecuteChanged();
 
-                    AssignContextToExceptionHandlers(this);
-
                     await ExecuteCommandAction(model).ConfigureAwait(false);
                 },
                 async () =>
@@ -256,11 +247,6 @@ namespace GuardedActions.Commands
 
         protected virtual void Finally()
         {
-        }
-
-        protected virtual void AssignContextToExceptionHandlers(object context)
-        {
-            ExceptionGuard.AssignContextToValidExceptionHandlers(context);
         }
 
         protected virtual bool CanExecute(TCommandParameter item)

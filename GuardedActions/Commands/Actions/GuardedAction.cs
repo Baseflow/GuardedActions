@@ -32,11 +32,6 @@ namespace GuardedActions.Commands.Actions
 
         protected virtual Task ExecuteAfter() => Task.CompletedTask;
 
-        protected virtual void AssignContextToExceptionHandlers(object context)
-        {
-            ExceptionGuard.AssignContextToValidExceptionHandlers(context);
-        }
-
         public virtual void Dispose()
         {
             ExceptionGuard = null;
@@ -67,11 +62,6 @@ namespace GuardedActions.Commands.Actions
         }
 
         protected virtual Task ExecuteAfter() => Task.CompletedTask;
-
-        protected virtual void AssignContextToExceptionHandlers(object context)
-        {
-            ExceptionGuard.AssignContextToValidExceptionHandlers(context);
-        }
 
         public virtual void Dispose()
         {

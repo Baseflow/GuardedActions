@@ -6,7 +6,7 @@ namespace GuardedActionsSample.Models
 {
     public class Download : NotifyPropertyChanged
     {
-        private string _errorMessage;
+        private string? _errorMessage;
         private bool _isDownloaded;
 
         public Download(string url, IDownloadCommandBuilder downloadCommandBuilder)
@@ -19,7 +19,7 @@ namespace GuardedActionsSample.Models
             DownloadCommand = downloadCommandBuilder.RegisterDataContext(this).BuildCommand();
         }
 
-        public string ErrorMessage
+        public string? ErrorMessage
         {
             get => _errorMessage;
             set => SetProperty(ref _errorMessage, value, () => RaisePropertyChanged(nameof(HasError)));
