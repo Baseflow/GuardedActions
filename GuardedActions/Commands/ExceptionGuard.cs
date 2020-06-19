@@ -173,11 +173,9 @@ namespace GuardedActions.Commands
         private static void AssignContextIfValid(IExceptionHandler exceptionHandler, object context)
         {
             var arguments = exceptionHandler.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GenericTypeArguments.Length == 2)?.GenericTypeArguments;
-
             if (arguments != null)
             {
                 var contextArgument = arguments[1];
-
                 if (contextArgument.IsInstanceOfType(context))
                 {
                     var propertyInfo = typeof(IContextExceptionHandler<,>)
@@ -201,10 +199,7 @@ namespace GuardedActions.Commands
 
         private static object? GetContextFromSender(object sender)
         {
-            if (sender == null)
-                return null;
-
-            return sender.GetType().GetProperties().FirstOrDefault(f => f.Name == "DataContext")?.GetValue(sender);
+            return sender?.GetType()?.GetProperties()?.FirstOrDefault(f => f.Name == "DataContext")?.GetValue(sender);
         }
     }
 }
