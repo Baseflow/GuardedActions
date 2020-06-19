@@ -13,4 +13,9 @@ namespace GuardedActions.ExceptionHandlers.Contracts
     {
         Task Handle(IExceptionHandlingAction<TException> exceptionHandlingAction);
     }
+
+    public interface IContextExceptionHandler<TException, TContext> : IExceptionHandler<TException> where TException : Exception where TContext : class
+    {
+        WeakReference<TContext> Context { get; }
+    }
 }

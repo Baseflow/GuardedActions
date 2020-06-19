@@ -10,7 +10,6 @@ namespace GuardedActions.Commands.Contracts
         Task Guard(object sender, Func<Task> job, Func<Task> onFinally = null);
         Task<TResult> Guard<TResult>(object sender, Func<Task<TResult>> job, Func<Task> onFinally = null);
         List<IExceptionHandler> ExceptionHandlers { get; }
-        void SetContextFor<THandler>(object context) where THandler : IExceptionHandler;
         void AssignContextToValidExceptionHandlers(object context);
     }
 }

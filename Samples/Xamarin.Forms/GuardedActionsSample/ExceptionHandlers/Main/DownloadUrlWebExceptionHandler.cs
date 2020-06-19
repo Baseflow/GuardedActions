@@ -13,7 +13,7 @@ namespace GuardedActionsSample.ErrorHandlers.FileManagement
     {
         public override Task Handle(IExceptionHandlingAction<WebException> exceptionHandlingAction)
         {
-            if (Context.TryGetTarget(out Download download))
+            if (Context.TryGetTarget(out var download))
             {
                 download.ErrorMessage = exceptionHandlingAction?.Exception?.Message;
             }

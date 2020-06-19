@@ -28,12 +28,6 @@ namespace GuardedActions.Commands
                                                          .GetInterfaces()
                                                          .FirstOrDefault(i => i == type) != null || h.GetType() == type);
 
-        public void SetContextFor<THandler>(object context) where THandler : IExceptionHandler
-        {
-            var handler = this[typeof(THandler)];
-            AssignContextIfValid(handler, context);
-        }
-
         public async Task Guard(object sender, Func<Task> job, Func<Task> onFinally = null)
         {
             try
@@ -184,7 +178,7 @@ namespace GuardedActions.Commands
             }
         }
 
-        private void AssignContextIfValid(IExceptionHandler exceptionHandler, object context)
+        private static void AssignContextIfValid(IExceptionHandler exceptionHandler, object context)
         {
             var arguments = exceptionHandler.GetType()
                 .GetInterfaces()
