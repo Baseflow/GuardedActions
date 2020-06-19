@@ -14,10 +14,9 @@ namespace GuardedActions.ExceptionHandlers.Contracts
         TException Exception { get; }
     }
 
-    public interface IExceptionHandlingAction<out TException, out TDataContext> : IExceptionHandlingAction, IDataContext<TDataContext>
+    public interface IExceptionHandlingAction<out TException, out TDataContext> : IExceptionHandlingAction<TException>, IDataContext<TDataContext>
         where TException : Exception
         where TDataContext : class
     {
-        TException Exception { get; }
     }
 }
