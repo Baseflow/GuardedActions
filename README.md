@@ -7,9 +7,9 @@ The Guarded Actions library comes with a set of providers to support some of the
 | ------------- | ------------- |
 | [.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/) | :white_check_mark: |
 | [MvvmCross](https://www.mvvmcross.com/) | :construction: |
-| [Ninject](http://www.ninject.org/) | :construction: |
+<!-- | [Ninject](http://www.ninject.org/) | :construction: | -->
 | [Unity](http://unitycontainer.org/) | :construction: |
-| [Castle.Windsor](http://www.castleproject.org/projects/windsor/) | :construction: |
+<!-- | [Castle.Windsor](http://www.castleproject.org/projects/windsor/) | :construction: | -->
 | [Autofac](https://autofac.org/) | :construction: |
 | [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
 | Custom<!-- (read more below)--> | :construction: |
