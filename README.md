@@ -20,7 +20,7 @@ The Guarded Actions library comes with a set of providers to support of the most
 
 Different IoC containers need different providers and so different NuGet packages. Down here you'll see samples on how to setup each IoC container provider.
 
- - [.NET Core](###net-core)
+ - [.NET Core](#net-core)
 
 :construction: The rest is to coming soon! :construction:
 
@@ -41,9 +41,7 @@ var host = new HostBuilder()
 
 ## Filing issues
 
-We want to keep the GitHub issues list for bugs, features and other important project management tasks only. If you have questions please see the [Questions & support section below](#questions--support).
-
-When filing issues, please select the appropriate [issue template](https://github.com/GuardedActions/GuardedActions/issues/new/choose). The best way to get your bug fixed is to be as detailed as you can be about the problem.
+When filing issues, please select the appropriate [issue template](https://github.com/Baseflow/GuardedActions/issues/new/choose). The best way to get your bug fixed is to be as detailed as you can be about the problem.
 Providing a minimal git repository with a project showing how to reproduce the problem is ideal. Here are a couple of questions you can answer before filing a bug.
 
 1. Did you include a snippet of the broken code in the issue?
