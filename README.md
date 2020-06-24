@@ -1,5 +1,5 @@
 # GuardedActions
-A library to improve the errorhandling, testability and reusability of apps that are using the MVVM pattern.
+A library to improve the error handling, testability and reusability of apps that are using the MVVM pattern.
 
 The Guarded Actions library comes with a set of providers to support of the most used of the IoC containers. 
 
