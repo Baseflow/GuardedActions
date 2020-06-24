@@ -1,7 +1,7 @@
 # GuardedActions
 A library to improve the errorhandling, testability and reusability of apps that are using the MVVM pattern.
 
-The Guarded Actions library comes with a set of providers to support of the most used of the IoC containers. Also, it'll be possible to extend the Guarded Actions library to your needs as it comes with the possibility of creating your own IoC provider. This way you could connect the Guarde Library to any IoC provider of your wishes!
+The Guarded Actions library comes with a set of providers to support of the most used of the IoC containers. 
 
 | IoC container | Supported |
 | ------------- | ------------- |
@@ -12,7 +12,9 @@ The Guarded Actions library comes with a set of providers to support of the most
 | [Castle.Windsor](http://www.castleproject.org/projects/windsor/) | :construction: |
 | [Autofac](https://autofac.org/) | :construction: |
 | [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
-| Custom | :construction: |
+| Custom<!-- (read more below)--> | :construction: |
+
+ <!-- Also, it'll be possible to extend the Guarded Actions library to your needs as it comes with the possibility of creating your own IoC provider. This way you could connect the GuardedActions Library to any IoC provider of your wishes! -->
 
 ## Installation
 
