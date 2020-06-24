@@ -1,0 +1,22 @@
+﻿using System;
+using GuardedActions.Contracts;
+
+namespace GuardedActions.ExceptionHandlers.Contracts
+{
+    public interface IExceptionHandlingAction
+    {
+        bool HandlingShouldFinish { get; set; }
+    }
+
+    public interface IExceptionHandlingAction<out TException> : IExceptionHandlingAction
+        where TException : Exception
+    {
+        TException Exception { get; }
+    }
+
+    public interface IExceptionHandlingAction<out TException, out TDataContext> : IExceptionHandlingAction<TException>, IDataContext<TDataContext>
+        where TException : Exception
+        where TDataContext : class
+    {
+    }
+}
