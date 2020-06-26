@@ -25,7 +25,7 @@
   </ItemGroup>
     
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GuardedActions\GuardedActions.csproj" />
+    <ProjectReference Include="..\..\..\GuardedActions.NetCore\GuardedActions.NetCore.csproj" />
   </ItemGroup>
     
   <ItemGroup>

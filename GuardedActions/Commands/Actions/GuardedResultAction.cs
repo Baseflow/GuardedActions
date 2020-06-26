@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using GuardedActions.Commands.Actions.Contracts;
 using GuardedActions.Commands.Contracts;
-using GuardedActions.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+using GuardedActions.IoC;
 
 namespace GuardedActions.Commands.Actions
 {
@@ -11,7 +10,7 @@ namespace GuardedActions.Commands.Actions
     {
         protected GuardedResultAction()
         {
-            ExceptionGuard = Configuration.Services.GetService<IExceptionGuard>();
+            ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
         }
 
         protected IExceptionGuard ExceptionGuard { get; private set; }
@@ -39,7 +38,7 @@ namespace GuardedActions.Commands.Actions
     {
         protected GuardedResultAction()
         {
-            ExceptionGuard = Configuration.Services.GetService<IExceptionGuard>();
+            ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
         }
 
         protected IExceptionGuard ExceptionGuard { get; private set; }

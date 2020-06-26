@@ -2,6 +2,8 @@
 using System.Reflection;
 using GuardedActions;
 using GuardedActions.Extensions;
+using GuardedActions.NetCore;
+using GuardedActions.NetCore.Extensions;
 using GuardedActionsSample.Factories;
 using GuardedActionsSample.Factories.Contracts;
 using GuardedActionsSample.ViewModels;
@@ -22,6 +24,8 @@ namespace GuardedActionsSample
             var assembly = Assembly.GetExecutingAssembly();
             using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.json");
 
+            var iocRegistration = new IoCRegistration();
+
 #pragma warning disable IDISP001 // Dispose created.
             var host = new HostBuilder()
                 .ConfigureHostConfiguration(c =>
@@ -34,15 +38,13 @@ namespace GuardedActionsSample
                     o.DisableColors = true;
                 }))
                 .ConfigureServices(ConfigureServices)
-                .ConfigureGuardedActions(nameof(GuardedActionsSample))
-                .Build();
+                .ConfigureGuardedActions(iocRegistration, nameof(GuardedActionsSample))
+                .Build()
+                .ConnectGuardedActions(iocRegistration);
 #pragma warning restore IDISP001 // Dispose created.
 
             //Save our service provider so we can use it later.
             Services = host.Services;
-
-            // TODO: Search if there is a better solution..
-            Configuration.SetupServiceProvider(Services);
         }
 
         private static void ConfigureServices(HostBuilderContext hostBuilderContext, IServiceCollection serviceCollection)
