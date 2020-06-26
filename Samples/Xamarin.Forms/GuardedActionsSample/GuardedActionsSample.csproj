@@ -26,10 +26,7 @@
     
   <ItemGroup>
     <ProjectReference Include="..\..\..\GuardedActions.NetCore\GuardedActions.NetCore.csproj" />
+    <ProjectReference Include="..\GuradedActionsSample.Core\GuardedActionsSample.Core.csproj" />
   </ItemGroup>
     
-  <ItemGroup>
-    <Folder Include="Commands\Actions\ExceptionHandlers\" />
-    <Folder Include="ExceptionHandlers\Main\" />
-  </ItemGroup>
 </Project>

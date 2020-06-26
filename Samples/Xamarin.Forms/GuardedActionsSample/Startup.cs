@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Reflection;
-using GuardedActions;
 using GuardedActions.Extensions;
 using GuardedActions.NetCore;
 using GuardedActions.NetCore.Extensions;
-using GuardedActionsSample.Factories;
-using GuardedActionsSample.Factories.Contracts;
-using GuardedActionsSample.ViewModels;
+using GuardedActionsSample.Core.Factories;
+using GuardedActionsSample.Core.Factories.Contracts;
+using GuardedActionsSample.Core.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

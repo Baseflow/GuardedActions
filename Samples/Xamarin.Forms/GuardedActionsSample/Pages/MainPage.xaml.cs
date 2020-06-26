@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using GuardedActionsSample.ViewModels;
+using GuardedActionsSample.Core.ViewModels;
 using Xamarin.Forms;
 using Microsoft.Extensions.DependencyInjection;
 
