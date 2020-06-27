@@ -5,7 +5,7 @@ namespace GuardedActions.NetCore.Extensions
 {
     public static class HostBuilderExtensions
     {
-        public static IHostBuilder ConfigureGuardedActions(this IHostBuilder builder, IoCRegistration iocRegistration, params string[] assemblyNames)
+        public static IHostBuilder ConfigureGuardedActions(this IHostBuilder builder, IoCSetup iocRegistration, params string[] assemblyNames)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
@@ -19,7 +19,7 @@ namespace GuardedActions.NetCore.Extensions
             });
         }
 
-        public static IHost ConnectGuardedActions(this IHost host, IoCRegistration ioCRegistration)
+        public static IHost ConnectGuardedActions(this IHost host, IoCSetup ioCRegistration)
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));

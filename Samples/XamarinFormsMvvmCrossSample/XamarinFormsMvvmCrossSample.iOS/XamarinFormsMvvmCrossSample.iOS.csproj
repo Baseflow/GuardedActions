@@ -5,13 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2C9D3E04-20E9-48C7-A8DB-0D1A2F6948C8}</ProjectGuid>
+    <ProjectGuid>{9B54B4EA-3ADC-4514-9FC6-3E4B76139B0E}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TemplateGuid>{6143fdea-f3c2-4a09-aafa-6e230626515e}</TemplateGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GuardedActionsSample.iOS</RootNamespace>
+    <RootNamespace>XamarinFormsMvvmCrossSample.iOS</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>GuardedActionsSample.iOS</AssemblyName>
+    <AssemblyName>XamarinFormsMvvmCrossSample.iOS</AssemblyName>
     <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
     <ProvisioningType>automatic</ProvisioningType>
@@ -124,19 +124,23 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.6.0.847" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions">
-      <Version>3.1.5</Version>
+    <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
+    <PackageReference Include="MvvmCross.Forms">
+      <Version>6.4.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GuardedActionsSample\GuardedActionsSample.csproj">
-      <Project>{FA35DD42-38FD-4080-830A-D30462AAD69E}</Project>
-      <Name>GuardedActionsSample</Name>
+    <ProjectReference Include="..\XamarinFormsMvvmCrossSample\XamarinFormsMvvmCrossSample.csproj">
+      <Project>{4258646B-5259-48E4-B6E9-DB50BF291EB8}</Project>
+      <Name>XamarinFormsMvvmCrossSample</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\GuardedActions.NetCore\GuardedActions.NetCore.csproj">
-      <Project>{FA21DBBE-A29E-4363-9EC3-2AF620CBB870}</Project>
-      <Name>GuardedActions.NetCore</Name>
+    <ProjectReference Include="..\XamarinFormsMvvmCrossSample.Core\XamarinFormsMvvmCrossSample.Core.csproj">
+      <Project>{2404DA0F-A22C-42AC-A7D4-2A994E525D6B}</Project>
+      <Name>XamarinFormsMvvmCrossSample.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\GuardedActions.MvvmCross\GuardedActions.MvvmCross.csproj">
+      <Project>{717303FD-D29A-45D1-A2A6-5D588245FD63}</Project>
+      <Name>GuardedActions.MvvmCross</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

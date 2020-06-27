@@ -118,17 +118,17 @@ namespace GuardedActions.IoC
 
         public abstract void AddTransientInternal(Type serviceType);
 
-        public void AddTransient<TServiceType, TImplementationType>() where TServiceType : class where TImplementationType : class => AddTransient(typeof(TServiceType), typeof(TImplementationType));
+        public void AddTransient<TContractType, TServiceType>() where TContractType : class where TServiceType : class => AddTransient(typeof(TContractType), typeof(TServiceType));
 
-        public void AddTransient(Type serviceType, Type implementationType)
+        public void AddTransient(Type contractType, Type serviceType)
         {
             if (!CanRegister)
                 throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddTransient)}({nameof(Type)}, {nameof(Type)}): {CannotResolveErrorMessage}");
 
-            AddTransientInternal(serviceType, implementationType);
+            AddTransientInternal(contractType, serviceType);
         }
 
-        public abstract void AddTransientInternal(Type serviceType, Type implementationType);
+        public abstract void AddTransientInternal(Type contractType, Type serviceType);
 
         public void AddSingleton<TServiceType>() where TServiceType : class => AddSingleton(typeof(TServiceType));
 
@@ -152,17 +152,17 @@ namespace GuardedActions.IoC
 
         public abstract void AddSingletonInternal(Type serviceType);
 
-        public void AddSingleton<TServiceType, TImplementationType>() where TServiceType : class where TImplementationType : class => AddSingleton(typeof(TServiceType), typeof(TImplementationType));
+        public void AddSingleton<TContractType, TServiceType>() where TContractType : class where TServiceType : class => AddSingleton(typeof(TContractType), typeof(TServiceType));
 
-        public void AddSingleton(Type serviceType, Type implementationType)
+        public void AddSingleton(Type contractType, Type serviceType)
         {
             if (!CanRegister)
                 throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddSingleton)}({nameof(Type)}, {nameof(Type)}): {CannotResolveErrorMessage}");
 
-            AddSingletonInternal(serviceType, implementationType);
+            AddSingletonInternal(contractType, serviceType);
         }
 
-        public abstract void AddSingletonInternal(Type serviceType, Type implementationType);
+        public abstract void AddSingletonInternal(Type contractType, Type serviceType);
 
         public TServiceType GetService<TServiceType>() where TServiceType : class
         {

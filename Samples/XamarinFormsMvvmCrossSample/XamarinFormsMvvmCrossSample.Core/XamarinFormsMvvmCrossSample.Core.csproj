@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MvvmCross.Forms" Version="6.4.2" />
+    <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Commands\" />
     <Folder Include="ExceptionHandlers\" />
     <Folder Include="Factories\" />
@@ -12,6 +16,6 @@
     <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GuardedActions.NetCore\GuardedActions.NetCore.csproj" />
+    <ProjectReference Include="..\..\..\GuardedActions.MvvmCross\GuardedActions.MvvmCross.csproj" />
   </ItemGroup>
 </Project>
