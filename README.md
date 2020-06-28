@@ -6,7 +6,7 @@ The Guarded Actions library comes with a set of providers to support some of the
 | IoC container | Supported |
 | ------------- | ------------- |
 | [.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/) | :white_check_mark: |
-| [MvvmCross](https://www.mvvmcross.com/) | :construction: |
+| [MvvmCross](https://www.mvvmcross.com/) | :white_check_mark: |
 | [Unity](http://unitycontainer.org/) | :construction: |
 | [Autofac](https://autofac.org/) | :construction: |
 | [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
@@ -22,22 +22,51 @@ The Guarded Actions library comes with a set of providers to support some of the
 Different IoC containers need different providers and so different NuGet packages. Down here you'll see samples on how to setup each IoC container provider.
 
  - [.NET Core](#net-core)
+ - [MvvmCross](#net-core)
 
 :construction: The rest is to coming soon! :construction:
 
 ### .NET Core
 
-Grab the latest [GuardedActions NuGet](https://www.nuget.org/packages/GuardActions/) package and install in your solution.
-> Install-Package GuardedActions
+Grab the latest [GuardedActions.NetCore NuGet](https://www.nuget.org/packages/GuardActions.NetCore/) package and install in your solution.
+> Install-Package GuardedActions.NetCore
 
-Then the only thing you've to do is configuring the GuardedActions library on the host builder. Note 
+Then the only thing you've to do is configuring and connect the GuardedActions library on the host builder. See the example below: 
 
 ```csharp
-using GuardedActions.Extensions;
+using GuardedActions.NetCore.Extensions;
 
-var host = new HostBuilder()
-    .ConfigureGuardedActions(nameof(GuardedActionsSample))
-    .Build();
+public class Startup
+{
+    public static void Init()
+    {
+        var iocSetup = new GuardedActions.NetCore.IoCSetup();
+
+        var host = new HostBuilder()
+            .ConfigureGuardedActions(iocSetup, "YourAssembliesStartWith")
+            .Build()
+            .ConnectGuardedActions(iocSetup);
+    }
+}
+```
+
+### MvvmCross
+
+Grab the latest [GuardedActions.MvvmCross NuGet](https://www.nuget.org/packages/GuardActions.MvvmCross/) package and install in your solution.
+> Install-Package GuardedActions.MvvmCross
+
+Then the only thing you've to do is configuring GuardedActions before registering the AppStart. See the example below: 
+
+```csharp
+public class App : MvxApplication
+{
+    public override void Initialize()
+    {
+        new GuardedActions.MvvmCross.IoCSetup().Configure(Mvx.IoCProvider, "YourAssembliesStartWith");
+
+        RegisterAppStart<MainViewModel>();
+    }
+}
 ```
 
 ## Filing issues
