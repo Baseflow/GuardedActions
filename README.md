@@ -34,13 +34,14 @@ Grab the latest [GuardedActions.NetCore NuGet](https://www.nuget.org/packages/Gu
 Then the only thing you've to do is configuring and connect the GuardedActions library on the host builder. See the example below: 
 
 ```csharp
+using GuardedActions.NetCore;
 using GuardedActions.NetCore.Extensions;
 
 public class Startup
 {
     public static void Init()
     {
-        var iocSetup = new GuardedActions.NetCore.IoCSetup();
+        var iocSetup = new GuardedActionsIoCSetup();
 
         var host = new HostBuilder()
             .ConfigureGuardedActions(iocSetup, "YourAssembliesStartWith")
@@ -58,11 +59,13 @@ Grab the latest [GuardedActions.MvvmCross NuGet](https://www.nuget.org/packages/
 Then the only thing you've to do is configuring GuardedActions before registering the AppStart. See the example below: 
 
 ```csharp
+using GuardedActions.MvvmCross;
+
 public class App : MvxApplication
 {
     public override void Initialize()
     {
-        new GuardedActions.MvvmCross.IoCSetup().Configure(Mvx.IoCProvider, "YourAssembliesStartWith");
+        new GuardedActionsIoCSetup().Configure(Mvx.IoCProvider, "YourAssembliesStartWith");
 
         RegisterAppStart<MainViewModel>();
     }

@@ -6,18 +6,18 @@ using Microsoft.Extensions.Hosting;
 
 namespace GuardedActions.NetCore
 {
-    public class IoCSetup : IoCRegistration
+    public class GuardedActionIoCSetup : IoCRegistration
     {
         private IServiceCollection? _serviceCollection;
         private IServiceProvider? _serviceProvider;
 
-        public IoCSetup SetServiceCollection(IServiceCollection serviceCollection)
+        public GuardedActionIoCSetup SetServiceCollection(IServiceCollection serviceCollection)
         {
             _serviceCollection = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));
             return this;
         }
 
-        public IoCSetup SetServiceProvider(IServiceProvider serviceProvider)
+        public GuardedActionIoCSetup SetServiceProvider(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             return this;

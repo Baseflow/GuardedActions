@@ -1,4 +1,5 @@
-﻿using MvvmCross;
+﻿using GuardedActions.MvvmCross;
+using MvvmCross;
 using MvvmCross.IoC;
 using MvvmCross.ViewModels;
 using XamarinFormsMvvmCrossSample.Core.Factories;
@@ -25,7 +26,7 @@ namespace XamarinFormsMvvmCrossSample.Core
 
             Mvx.RegisterSingleton<IDownloadFactory>(new DownloadFactory());
 
-            new GuardedActions.MvvmCross.IoCSetup().Configure(Mvx.IoCProvider, nameof(XamarinFormsMvvmCrossSample));
+            new GuardedActionIoCSetup().Configure(Mvx.IoCProvider, nameof(XamarinFormsMvvmCrossSample));
         }
     }
 }

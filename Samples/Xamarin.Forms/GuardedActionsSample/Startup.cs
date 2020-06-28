@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using GuardedActions.Extensions;
+using GuardedActions.NetCore;
 using GuardedActions.NetCore.Extensions;
 using GuardedActionsSample.Core.Factories;
 using GuardedActionsSample.Core.Factories.Contracts;
@@ -22,7 +23,7 @@ namespace GuardedActionsSample
             var assembly = Assembly.GetExecutingAssembly();
             using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.appsettings.json");
 
-            var iocSetup = new GuardedActions.NetCore.IoCSetup();
+            var iocSetup = new GuardedActionIoCSetup();
 
 #pragma warning disable IDISP001 // Dispose created.
             var host = new HostBuilder()
