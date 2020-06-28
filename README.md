@@ -10,7 +10,7 @@ The Guarded Actions library comes with a set of providers to support some of the
 | [Unity](http://unitycontainer.org/) | :construction: |
 | [Autofac](https://autofac.org/) | :construction: |
 | [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
-| Custom<!-- (read more below)--> | :construction: |
+| Custom (read more below) | :white_check_mark: |
 
 <!-- | [Ninject](http://www.ninject.org/) | :construction: | -->
 <!-- | [Castle.Windsor](http://www.castleproject.org/projects/windsor/) | :construction: | -->
@@ -22,7 +22,8 @@ The Guarded Actions library comes with a set of providers to support some of the
 Different IoC containers need different providers and so different NuGet packages. Down here you'll see samples on how to setup each IoC container provider.
 
  - [.NET Core](#net-core)
- - [MvvmCross](#net-core)
+ - [MvvmCross](#mvvmcross)
+ - [Custom](#custom)
 
 :construction: The rest is to coming soon! :construction:
 
@@ -70,6 +71,61 @@ public class App : MvxApplication
         RegisterAppStart<MainViewModel>();
     }
 }
+```
+
+### Custom
+
+Grab the latest [GuardedActions NuGet](https://www.nuget.org/packages/GuardActions/) package and install in your solution.
+> Install-Package GuardedActions
+
+Then the only thing you've to do is to create your own IoC setup class in which you will connect your IoC container to the GuardedActions library. This can be done by creating a `GuardedActionCustomIoCSetup` class which inherits from the `GuardedActions.IoC.IoCRegistraton` class. See the example below: 
+
+```csharp
+using GuardedActions.IoC;
+
+public class GuardedActionCustomIoCSetup : IoCRegistration
+{
+    private IYourIoCContainer? _yourIoCContainer;
+
+    private static string _customErrorMessage = $"Make sure you've called the {nameof(Configure)} on the {nameof(GuardedActionCustomIoCSetup)} before ...";
+
+    public void Configure(IYourIoCContainer yourIoCContainer, params string[] assemblyNames)
+    {
+        _yourIoCContainer = yourIoCContainer ?? throw new ArgumentNullException(nameof(yourIoCContainer));
+            
+        Register(assemblyNames);
+    }
+
+    public override void AddSingletonInternal<TServiceType>(Func<TServiceType> constructor) where TServiceType : class => _yourIoCContainer.AddSingleton(() => constructor.Invoke());
+
+    public override void AddSingletonInternal(Type serviceType) => _yourIoCContainer.AddSingleton(serviceType);
+
+    public override void AddSingletonInternal(Type contractType, Type serviceType) => _yourIoCContainer.AddSingleton(contractType, serviceType);
+
+    public override void AddTransientInternal(Type serviceType) => _yourIoCContainer.AddTransient(serviceType);
+
+    public override void AddTransientInternal(Type contractType, Type serviceType) => _yourIoCContainer.AddTransient(contractType, serviceType);
+
+    public override TServiceType GetServiceInternal<TServiceType>() where TServiceType : class => _yourIoCContainer.GetService<TServiceType>();
+
+    public override TServiceType GetServiceInternal<TServiceType>(Type serviceType) where TServiceType : class => _yourIoCContainer.GetService<TServiceType>(serviceType);
+
+    public override bool CanRegister => _yourIoCContainer != null;
+
+    public override bool CanResolve => _yourIoCContainer != null;
+
+    public override string CannotRegisterErrorMessage => _customErrorMessage;
+
+    public override string CannotResolveErrorMessage => _customErrorMessage;
+}
+```
+
+And then ofcourse don't foreget to call your custom IoC setup class before loading your app.
+
+
+```csharp
+new GuardedActionCustomIoCSetup().Configure(yourIoCContainer, "YourAssembliesStartWith");
+
 ```
 
 ## Filing issues

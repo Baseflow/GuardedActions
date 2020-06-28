@@ -184,9 +184,9 @@ namespace GuardedActions.IoC
 
         public abstract TServiceType GetServiceInternal<TServiceType>(Type serviceType) where TServiceType : class;
 
-        public abstract string CannotRegisterErrorMessage { get; }
+        public virtual string CannotRegisterErrorMessage => "Registering your service is not possible please check your GuardedActions IoC setup implementation.";
 
-        public abstract string CannotResolveErrorMessage { get; }
+        public virtual string CannotResolveErrorMessage => "Resolving your service is not possible please check your GuardedActions IoC setup implementation.";
     }
 
     public enum IoCRegistrationType
