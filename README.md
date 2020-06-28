@@ -87,7 +87,7 @@ public class GuardedActionCustomIoCSetup : IoCRegistration
 {
     private IYourIoCContainer? _yourIoCContainer;
 
-    private static string _customErrorMessage = $"Make sure you've called the {nameof(Configure)} on the {nameof(GuardedActionCustomIoCSetup)} before ...";
+    private static string _customErrorMessage = $"Make sure you've called the {nameof(Configure)} on the {nameof(GuardedActionCustomIoCSetup)} before your app starts.";
 
     public void Configure(IYourIoCContainer yourIoCContainer, params string[] assemblyNames)
     {
@@ -120,7 +120,7 @@ public class GuardedActionCustomIoCSetup : IoCRegistration
 }
 ```
 
-And then ofcourse don't foreget to call your custom IoC setup class before loading your app.
+And then of course don't forget to call your custom IoC setup class after setting up your IoC container and before loading your app.
 
 
 ```csharp
