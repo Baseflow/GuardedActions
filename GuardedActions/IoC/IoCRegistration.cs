@@ -1,44 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GuardedActions.Commands.Actions.Contracts;
 using GuardedActions.Commands.Contracts;
 using GuardedActions.ExceptionHandlers;
 using GuardedActions.ExceptionHandlers.Contracts;
 using GuardedActions.Extensions;
 using GuardedActions.Utils;
-using Microsoft.Extensions.DependencyInjection;
 using GuardedActions.Commands;
+using System.Linq;
 
 namespace GuardedActions.IoC
 {
-    public class IoCRegistration
+    public abstract class IoCRegistration
     {
-        private readonly IServiceCollection _services;
-        private readonly IEnumerable<Type> _createableTypes;
+        private IEnumerable<Type> _createableTypes = Array.Empty<Type>();
 
-        public IoCRegistration(IServiceCollection services, params string[] assemblyNames)
+        public static IoCRegistration Instance { get; private set; }
+
+        protected IoCRegistration()
         {
-            _services = services;
-            _createableTypes = AssemblyUtils.GetRegistrationAssemblies(assemblyNames).GetCreatableTypes();
+            Instance = this;
         }
 
-        public void Register()
+        public abstract bool CanRegister { get; }
+
+        public abstract bool CanResolve { get; }
+
+        public void Register(params string[] assemblyNames)
         {
+            if (!CanRegister)
+                throw new InvalidOperationException($"{GetType().FullName}: {CannotRegisterErrorMessage}.");
+
+            DetermineCreatableTypes(assemblyNames);
+
             AddSweep<IAction>(IoCRegistrationType.Transient);
 
             AddSweep<ICommandBuilder>(IoCRegistrationType.Transient);
 
             var exceptionHandlerTypes = AddSweep<IExceptionHandler>(IoCRegistrationType.Singleton);
 
-            _services.AddSingleton<IExceptionHandlingActionFactory, ExceptionHandlingActionFactory>();
+            AddSingleton<IExceptionHandlingActionFactory, ExceptionHandlingActionFactory>();
 
-            _services.AddSingleton<IExceptionGuard>(serviceProvider =>
+            AddSingleton<IExceptionGuard>(() =>
             {
-                var factory = serviceProvider.GetService<IExceptionHandlingActionFactory>();
-                var handlers = exceptionHandlerTypes.Select(handlerType => serviceProvider.GetService<IExceptionHandler>(handlerType)).ToList();
+                var factory = GetService<IExceptionHandlingActionFactory>();
+                var handlers = exceptionHandlerTypes.Select(handlerType => GetService<IExceptionHandler>(handlerType)).ToList();
                 return new ExceptionGuard(handlers, factory);
             });
+        }
+
+        private void DetermineCreatableTypes(string[] assemblyNames)
+        {
+            var assemblies = assemblyNames != null ? AssemblyUtils.GetRegistrationAssemblies(assemblyNames) : AppDomain.CurrentDomain.GetAssemblies();
+
+            _createableTypes = assemblies.GetCreatableTypes() ?? Array.Empty<Type>();
         }
 
         protected IEnumerable<Type> AddSweep(string kind, IoCRegistrationType registrationType)
@@ -65,10 +80,6 @@ namespace GuardedActions.IoC
         {
             foreach (var type in types)
             {
-                var attribute = type.GetAttribute<GuardedActionsIoCRegistrationAttribute>();
-
-                registrationType = attribute != null ? attribute.RegistrationType : registrationType;
-
                 if (registrationType == IoCRegistrationType.Manual)
                     continue;
 
@@ -78,9 +89,9 @@ namespace GuardedActions.IoC
                 {
                     foreach (var implementedType in implementing)
                     {
-                        _services.AddTransient(implementedType, type);
+                        AddTransient(implementedType, type);
                     }
-                    _services.AddTransient(type);
+                    AddTransient(type);
                     continue;
                 }
 
@@ -88,20 +99,100 @@ namespace GuardedActions.IoC
                 {
                     foreach (var implementedType in implementing)
                     {
-                        // TODO Ask Artur what the AutoActivate is for
-                        //if (singleInstanceType.AutoActivate)
-                        //{
-                        //    IocProvider.RegisterSingleton(implementedType, IocProvider.IoCConstruct(type));
-                        //}
-                        //else
-                        //{
-                        //    IocProvider.RegisterSingleton(implementedType, () => IocProvider.IoCConstruct(type));
-                        //}
-                        _services.AddSingleton(implementedType, type);
+                        AddSingleton(implementedType, type);
                     }
-                    _services.AddSingleton(type);
+                    AddSingleton(type);
                 }
             }
         }
+
+        public void AddTransient<TServiceType>() where TServiceType : class => AddTransient(typeof(TServiceType));
+
+        public void AddTransient(Type serviceType)
+        {
+            if (!CanRegister)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddTransient)}({nameof(Type)}): {CannotResolveErrorMessage}");
+
+            AddTransientInternal(serviceType);
+        }
+
+        public abstract void AddTransientInternal(Type serviceType);
+
+        public void AddTransient<TContractType, TServiceType>() where TContractType : class where TServiceType : class => AddTransient(typeof(TContractType), typeof(TServiceType));
+
+        public void AddTransient(Type contractType, Type serviceType)
+        {
+            if (!CanRegister)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddTransient)}({nameof(Type)}, {nameof(Type)}): {CannotResolveErrorMessage}");
+
+            AddTransientInternal(contractType, serviceType);
+        }
+
+        public abstract void AddTransientInternal(Type contractType, Type serviceType);
+
+        public void AddSingleton<TServiceType>() where TServiceType : class => AddSingleton(typeof(TServiceType));
+
+        public void AddSingleton<TServiceType>(Func<TServiceType> constructor) where TServiceType : class
+        {
+            if (!CanRegister)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddSingleton)}<{nameof(TServiceType)}>({typeof(Func<TServiceType>)}): {CannotResolveErrorMessage}");
+
+            AddSingletonInternal(constructor);
+        }
+
+        public abstract void AddSingletonInternal<TServiceType>(Func<TServiceType> constructor) where TServiceType : class;
+
+        public void AddSingleton(Type serviceType)
+        {
+            if (!CanRegister)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddSingleton)}({nameof(Type)}): {CannotResolveErrorMessage}");
+
+            AddSingletonInternal(serviceType);
+        }
+
+        public abstract void AddSingletonInternal(Type serviceType);
+
+        public void AddSingleton<TContractType, TServiceType>() where TContractType : class where TServiceType : class => AddSingleton(typeof(TContractType), typeof(TServiceType));
+
+        public void AddSingleton(Type contractType, Type serviceType)
+        {
+            if (!CanRegister)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(AddSingleton)}({nameof(Type)}, {nameof(Type)}): {CannotResolveErrorMessage}");
+
+            AddSingletonInternal(contractType, serviceType);
+        }
+
+        public abstract void AddSingletonInternal(Type contractType, Type serviceType);
+
+        public TServiceType GetService<TServiceType>() where TServiceType : class
+        {
+            if (!CanResolve)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(GetService)}<{nameof(TServiceType)}>: {CannotResolveErrorMessage}");
+
+            return GetServiceInternal<TServiceType>();
+        }
+
+        public abstract TServiceType GetServiceInternal<TServiceType>() where TServiceType : class;
+
+        public TServiceType GetService<TServiceType>(Type serviceType) where TServiceType : class
+        {
+            if (!CanResolve)
+                throw new InvalidOperationException($"{GetType().FullName}.{nameof(GetService)}<{nameof(TServiceType)}>({nameof(Type)}): {CannotResolveErrorMessage}");
+
+            return GetServiceInternal<TServiceType>(serviceType);
+        }
+
+        public abstract TServiceType GetServiceInternal<TServiceType>(Type serviceType) where TServiceType : class;
+
+        public virtual string CannotRegisterErrorMessage => "Registering your service is not possible please check your GuardedActions IoC setup implementation.";
+
+        public virtual string CannotResolveErrorMessage => "Resolving your service is not possible please check your GuardedActions IoC setup implementation.";
+    }
+
+    public enum IoCRegistrationType
+    {
+        Manual,
+        Transient,
+        Singleton
     }
 }

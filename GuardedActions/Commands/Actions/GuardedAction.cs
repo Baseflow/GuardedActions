@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using GuardedActions.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using GuardedActions.Commands.Actions.Contracts;
 using GuardedActions.Commands.Contracts;
 using System;
+using GuardedActions.IoC;
 
 namespace GuardedActions.Commands.Actions
 {
@@ -12,7 +11,7 @@ namespace GuardedActions.Commands.Actions
         protected GuardedAction()
         {
             // See if DI could be used
-            ExceptionGuard = Configuration.Services.GetService<IExceptionGuard>();
+            ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
             //Messenger = ??
         }
 
@@ -44,7 +43,7 @@ namespace GuardedActions.Commands.Actions
     {
         protected GuardedAction()
         {
-            ExceptionGuard = Configuration.Services.GetService<IExceptionGuard>();
+            ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
             //Messenger = ??
         }
 

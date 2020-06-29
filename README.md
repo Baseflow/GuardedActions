@@ -6,11 +6,11 @@ The Guarded Actions library comes with a set of providers to support some of the
 | IoC container | Supported |
 | ------------- | ------------- |
 | [.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/) | :white_check_mark: |
-| [MvvmCross](https://www.mvvmcross.com/) | :construction: |
+| [MvvmCross](https://www.mvvmcross.com/) | :white_check_mark: |
 | [Unity](http://unitycontainer.org/) | :construction: |
 | [Autofac](https://autofac.org/) | :construction: |
 | [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
-| Custom<!-- (read more below)--> | :construction: |
+| Custom (read more below) | :white_check_mark: |
 
 <!-- | [Ninject](http://www.ninject.org/) | :construction: | -->
 <!-- | [Castle.Windsor](http://www.castleproject.org/projects/windsor/) | :construction: | -->
@@ -22,22 +22,110 @@ The Guarded Actions library comes with a set of providers to support some of the
 Different IoC containers need different providers and so different NuGet packages. Down here you'll see samples on how to setup each IoC container provider.
 
  - [.NET Core](#net-core)
+ - [MvvmCross](#mvvmcross)
+ - [Custom](#custom)
 
 :construction: The rest is to coming soon! :construction:
 
 ### .NET Core
 
+Grab the latest [GuardedActions.NetCore NuGet](https://www.nuget.org/packages/GuardActions.NetCore/) package and install in your solution.
+> Install-Package GuardedActions.NetCore
+
+Then the only thing you've to do is configuring and connect the GuardedActions library on the host builder. See the example below: 
+
+```csharp
+using GuardedActions.NetCore;
+using GuardedActions.NetCore.Extensions;
+
+public class Startup
+{
+    public static void Init()
+    {
+        var iocSetup = new GuardedActionsIoCSetup();
+
+        var host = new HostBuilder()
+            .ConfigureGuardedActions(iocSetup, "YourAssembliesStartWith")
+            .Build()
+            .ConnectGuardedActions(iocSetup);
+    }
+}
+```
+
+### MvvmCross
+
+Grab the latest [GuardedActions.MvvmCross NuGet](https://www.nuget.org/packages/GuardActions.MvvmCross/) package and install in your solution.
+> Install-Package GuardedActions.MvvmCross
+
+Then the only thing you've to do is configuring GuardedActions before registering the AppStart. See the example below: 
+
+```csharp
+using GuardedActions.MvvmCross;
+
+public class App : MvxApplication
+{
+    public override void Initialize()
+    {
+        new GuardedActionsIoCSetup().Configure(Mvx.IoCProvider, "YourAssembliesStartWith");
+
+        RegisterAppStart<MainViewModel>();
+    }
+}
+```
+
+### Custom
+
 Grab the latest [GuardedActions NuGet](https://www.nuget.org/packages/GuardActions/) package and install in your solution.
 > Install-Package GuardedActions
 
-Then the only thing you've to do is configuring the GuardedActions library on the host builder. Note 
+Then the only thing you've to do is to create your own IoC setup class in which you will connect your IoC container to the GuardedActions library. This can be done by creating a `GuardedActionCustomIoCSetup` class which inherits from the `GuardedActions.IoC.IoCRegistraton` class. See the example below: 
 
 ```csharp
-using GuardedActions.Extensions;
+using GuardedActions.IoC;
 
-var host = new HostBuilder()
-    .ConfigureGuardedActions(nameof(GuardedActionsSample))
-    .Build();
+public class GuardedActionCustomIoCSetup : IoCRegistration
+{
+    private IYourIoCContainer? _yourIoCContainer;
+
+    private static string _customErrorMessage = $"Make sure you've called the {nameof(Configure)} on the {nameof(GuardedActionCustomIoCSetup)} before your app starts.";
+
+    public void Configure(IYourIoCContainer yourIoCContainer, params string[] assemblyNames)
+    {
+        _yourIoCContainer = yourIoCContainer ?? throw new ArgumentNullException(nameof(yourIoCContainer));
+            
+        Register(assemblyNames);
+    }
+
+    public override void AddSingletonInternal<TServiceType>(Func<TServiceType> constructor) where TServiceType : class => _yourIoCContainer.AddSingleton(() => constructor.Invoke());
+
+    public override void AddSingletonInternal(Type serviceType) => _yourIoCContainer.AddSingleton(serviceType);
+
+    public override void AddSingletonInternal(Type contractType, Type serviceType) => _yourIoCContainer.AddSingleton(contractType, serviceType);
+
+    public override void AddTransientInternal(Type serviceType) => _yourIoCContainer.AddTransient(serviceType);
+
+    public override void AddTransientInternal(Type contractType, Type serviceType) => _yourIoCContainer.AddTransient(contractType, serviceType);
+
+    public override TServiceType GetServiceInternal<TServiceType>() where TServiceType : class => _yourIoCContainer.GetService<TServiceType>();
+
+    public override TServiceType GetServiceInternal<TServiceType>(Type serviceType) where TServiceType : class => _yourIoCContainer.GetService<TServiceType>(serviceType);
+
+    public override bool CanRegister => _yourIoCContainer != null;
+
+    public override bool CanResolve => _yourIoCContainer != null;
+
+    public override string CannotRegisterErrorMessage => _customErrorMessage;
+
+    public override string CannotResolveErrorMessage => _customErrorMessage;
+}
+```
+
+And then of course don't forget to call your custom IoC setup class after setting up your IoC container and before loading your app.
+
+
+```csharp
+new GuardedActionCustomIoCSetup().Configure(yourIoCContainer, "YourAssembliesStartWith");
+
 ```
 
 ## Filing issues

@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AsyncAwaitBestPractices.MVVM;
 using GuardedActions.Commands.Contracts;
-using GuardedActions.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+using GuardedActions.IoC;
 
 namespace GuardedActions.Commands
 {
@@ -18,7 +17,7 @@ namespace GuardedActions.Commands
 
         protected AsyncGuardedCommandBuilder()
         {
-            ExceptionGuard = Configuration.Services.GetService<IExceptionGuard>();
+            ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
             //Messenger = ??
         }
 
@@ -143,7 +142,7 @@ namespace GuardedActions.Commands
 
         protected AsyncGuardedCommandBuilder()
         {
-            ExceptionGuard = Configuration.Services.GetService<IExceptionGuard>();
+            ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
             //Messenger = ??
         }
 
