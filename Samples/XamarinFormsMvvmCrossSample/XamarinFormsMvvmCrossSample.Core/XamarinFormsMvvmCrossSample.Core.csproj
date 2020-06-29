@@ -1,9 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="MvvmCross.Forms" Version="6.4.2" />
     <PackageReference Include="AsyncAwaitBestPractices.MVVM" Version="4.1.1" />
