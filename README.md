@@ -18,7 +18,7 @@ The Guarded Actions library comes with a set of providers to support some of the
 
 The command builders make it really easy to reuse commands troughout multiple view models without having to create some kind of base class like shown below: 
 
-Classic example:
+**Classic example:**
 ```csharp
 public class ViewModelA : SharedViewModel
 {
@@ -49,7 +49,7 @@ So, this means that if you only need one or a couple of the commands you'll need
 
 So with the Guarded actions you could solve this issue by creating `CommandBuilders` which can be loaded trough DI and so are reuseable. Note: you don't need to register the builders yourself if you [install](#installation) the `GuardedActions` library correctly it'll register and resolve the builders automatically.
 
-GuardedAction code:
+**GuardedAction example:**
 
 ```csharp
     public class ViewModelA : BaseViewModel, IScannable
@@ -90,7 +90,113 @@ GuardedAction code:
 ```
 
 ### Testability
-:construction: Under construction, coming ASAP! :construction:
+If you use this library in the way it's designed to be used you should end up having loads of small building blocks:
+
+ - ViewModels
+ - Command(Builder)s
+ - Actions
+ - ErrorHandlers
+
+Each of these buidling blocks should be isolated, loosely coupled and obey the seperation of concerne design priciples. This will mean that you only have to write really small tests with a clear goal wich will greatly improve the testability in your project.
+
+So, for example if you seperate all the commands from the view models the view model should only contain some bindable properties with the pupose of storing and displaying data on the view. This results in the view model having one clear goal and that one clear goal becomes easily testable. See the example below:
+
+**GuardedAction - View model example**:
+```csharp
+public class MainViewModel : BaseViewModel
+{
+    private string _errorMessage;
+
+    private ObservableCollection<Download> _downloads;
+
+    private readonly IInitializeCommandBuilder _initializeCommandBuilder;
+    private readonly IDownloadAllCommandBuilder _downloadAllCommandBuilder;
+
+    private ICommand _initializeCommand;
+    private ICommand _downloadAllCommand;
+
+    public MainViewModel(IInitializeCommandBuilder initializeCommandBuilder, IDownloadAllCommandBuilder downloadAllCommandBuilder)
+    {
+        _initializeCommandBuilder = initializeCommandBuilder ?? throw new ArgumentNullException(nameof(initializeCommandBuilder));
+        _downloadAllCommandBuilder = downloadAllCommandBuilder ?? throw new ArgumentNullException(nameof(downloadAllCommandBuilder));
+
+        InitializeCommand.Execute(null);
+    }
+
+    public ICommand InitializeCommand => _initializeCommand ??= _initializeCommandBuilder?.RegisterDataContext(this).BuildCommand();
+    public ICommand DownloadAllCommand => _downloadAllCommand ??= _downloadAllCommandBuilder?.RegisterDataContext(this).BuildCommand();
+
+    public bool ShowErrorMessage => ErrorMessage != null;
+
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => SetProperty(ref _errorMessage, value, () => RaisePropertyChanged(nameof(ShowErrorMessage)));
+    }
+
+    public ObservableCollection<Download> Downloads
+    {
+        get => _downloads;
+        set => SetProperty(ref _downloads, value);
+    }
+}
+```
+
+**GuardedAction - View model test example**:
+```csharp
+[Fact]
+public void MainViewModel_InheritsBaseViewModel()
+{
+    // Arrange
+    var baseViewModelType = typeof(BaseViewModel);
+    var mainViewModelType = typeof(MainViewModel);
+
+    // Act
+    var result = baseViewModelType.IsAssignableFrom(mainViewModelType);
+
+    // Assert
+    Assert.True(result);
+}
+
+[Fact]
+public void MainViewModel_CheckNotifyPropertyChanged()
+{
+    // Arrange
+    var initializeCommandBuilder = Mock.Of<IInitializeCommandBuilder>();
+    var downloadAllCommandBuilder = Mock.Of<IDownloadAllCommandBuilder>();
+    var viewModel = new MainViewModel(initializeCommandBuilder, downloadAllCommandBuilder);
+
+    var lastChangedPropertyName = string.Empty;
+    viewModel.PropertyChanged += (sender, args) => lastChangedPropertyName = args.PropertyName;
+
+    // Act
+    viewModel.Downloads = new ObservableCollection<Download>();
+
+    // Assert
+    Assert.Equal(nameof(viewModel.Downloads), lastChangedPropertyName);
+}
+
+[Fact]
+// Check if the view receives a notification that also the ShowErrorMessage has been updated when setting the value of the ErrorMessage
+public void MainViewModel_EditErrorMessage()
+{
+    // Arrange
+    var initializeCommandBuilder = Mock.Of<IInitializeCommandBuilder>();
+    var downloadAllCommandBuilder = Mock.Of<IDownloadAllCommandBuilder>();
+    var viewModel =  new MainViewModel(initializeCommandBuilder, downloadAllCommandBuilder);
+
+    var propertyChanges = new List<string>();
+    viewModel.PropertyChanged += (sender, args) => propertyChanges.Add(args.PropertyName);
+
+    // Act
+    viewModel.ErrorMessage = "Foo";
+
+    // Assert
+    Assert.Equal(2, propertyChanges.Count);
+    Assert.Contains(nameof(viewModel.ErrorMessage), propertyChanges);
+    Assert.Contains(nameof(viewModel.ShowErrorMessage), propertyChanges);
+}
+```
 
 ### Error handling
 :construction: Under construction, coming ASAP! :construction:
