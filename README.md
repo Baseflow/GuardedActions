@@ -44,9 +44,9 @@ public class SharedViewModel : BaseViewModel
 }
 ```
 
-The solution above could cause some issues in bigger projects. In these projects people tend to reuse specific commands. The most common approach we see people take is creating somekind of base class containing the shared commands. 
+The solution above could cause some issues in bigger projects. In these projects people tend to reuse specific commands. The most common approach we see people take is creating a base class containing all the shared commands. 
 
-Now in big projects this shared class tend to grow quickly and become some big spagetti class with all kind of commands for different purposes.. 
+Now in big projects this shared class tend to grow quickly and become a big 'spagetti' class with all kind of commands for different purposes.. 
 
 Not really following the separation of concerns design priciples.. 
 
