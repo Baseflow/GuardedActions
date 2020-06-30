@@ -10,7 +10,7 @@ The Guarded Actions library comes with a set of providers to support some of the
 | [Unity](http://unitycontainer.org/) | :construction: |
 | [Autofac](https://autofac.org/) | :construction: |
 | [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
-| Custom (read more below) | :white_check_mark: |
+| Custom ([read more](#custom)) | :white_check_mark: |
 
 <!-- | [Ninject](http://www.ninject.org/) | :construction: | -->
 <!-- | [Castle.Windsor](http://www.castleproject.org/projects/windsor/) | :construction: | -->
