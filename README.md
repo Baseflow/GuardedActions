@@ -17,6 +17,89 @@ The Guarded Actions library comes with a set of providers to support some of the
 
  <!-- Also, it'll be possible to extend the Guarded Actions library to your needs as it comes with the possibility of creating your own IoC provider. This way you could connect the GuardedActions Library to any IoC provider of your wishes! -->
 
+## So why should I use it?
+
+### Reusability
+
+The command builders make it really easy to reuse commands troughout multiple view models without having to create some kind of base class like shown below: 
+
+Classic example:
+```csharp
+public class ViewModelA : SharedViewModel
+{
+}
+
+public class ViewModelB : SharedViewModel
+{
+}
+
+public class SharedViewModel : BaseViewModel
+{
+    private ICommand _scanCommand;
+    public ICommand ScanCommand => _scanCommand ??= new Command(Scan);
+    private void Scan()
+    {
+        ...
+    }
+}
+```
+
+The solution above could cause some issues in bigger projects. In these projects people tend to reuse specific commands. The most common approach we see people take is creating somekind of base class containing the shared commands. 
+
+Now in big projects this shared class tend to grow quickly and become some big spagetti class with all kind of commands for different purposes.. 
+
+Not really following the separation of concerns design priciples.. 
+
+So, this means that if you only need one or a couple of the commands you'll need to inherit the entire base class with all kinds of stuff you don't want/need or you'll create a copy with only those commands you like to use. But keep in mind when you copy past commands you don't reuse them.. 
+
+So with the Guarded actions you could solve this issue by creating `CommandBuilders` which can be loaded trough DI and so are reuseable. Note: you don't need to register the builders yourself if you [install](#installation) the `GuardedActions` library correctly it'll register and resolve the builders automatically.
+
+GuardedAction code:
+
+```csharp
+    public class ViewModelA : BaseViewModel, IScannable
+    {
+        private readonly IScanCommandBuilder _scanCommandBuilder;
+        
+        private ICommand _scanCommand;
+        public ICommand ScanCommand => _scanCommand ??= _scanCommandBuilder?.RegisterDataContext(this).BuildCommand()
+        
+        public ViewModelA(IScanCommandBuilder scanCommandBuilder)
+        {
+            _scanCommandBuilder = scanCommandBuilder ?? throw new ArgumentNullException(nameof(scanCommandBuilder));
+        }
+    }
+    
+    public class ViewModelB : BaseViewModel, IScannable
+    {
+        private readonly IScanCommandBuilder _scanCommandBuilder;
+        
+        private ICommand _scanCommand;
+        public ICommand ScanCommand => _scanCommand ??= _scanCommandBuilder?.RegisterDataContext(this).BuildCommand()
+        
+        public ViewModelA(IScanCommandBuilder scanCommandBuilder)
+        {
+            _scanCommandBuilder = scanCommandBuilder ?? throw new ArgumentNullException(nameof(scanCommandBuilder));
+        }
+    }
+    
+    public class ScanCommandBuilder : AsyncGuardedDataContextCommandBuilder<IScannable>, IScanCommandBuilder
+    {
+        protected override Task ExecuteCommandAction()
+        {
+            // 1. Multiple actions can be added handling the scanning feature
+            // 2. The DataContext could be modified directly. This is in this case the ViewModel but accessed trough it's IScannable contract.
+            return Task.CompletedTask;
+        }
+    }
+```
+
+### Testability
+:construction: Under construction, coming ASAP! :construction:
+
+### Error handling
+:construction: Under construction, coming ASAP! :construction:
+
 ## Installation
 
 Different IoC containers need different providers and so different NuGet packages. Down here you'll see samples on how to setup each IoC container provider.
