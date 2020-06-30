@@ -1,18 +1,16 @@
 # GuardedActions
-A library to :rocket: increase the :x: error handling, :test_tube: testability and :recycle: reusability for all your MVVM driven apps! More information about these topics and why you should use the GuardedActions library can be found [here](#so-why-should-i-use-it).
+A library to :rocket: increase the :x: error handling, :test_tube: testability and :recycle: reusability for all your MVVM driven apps! 
 
-The Guarded Actions library comes with a set of providers to support some of the most commonly used of the IoC containers. 
-
-| IoC container | Supported |
-| ------------- | ------------- |
-| [.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/) | :white_check_mark: |
-| [MvvmCross](https://www.mvvmcross.com/) | :white_check_mark: |
-| [Unity](http://unitycontainer.org/) | :construction: |
-| [Autofac](https://autofac.org/) | :construction: |
-| [TinyIoC](https://github.com/grumpydev/TinyIoC) | :construction: |
-| Custom ([read more](#custom)) | :white_check_mark: |
+- [Why should I use it?](#so-why-should-i-use-it)
+- [Which IoC containers are supported?](#supported-ioc-containers)
+- [How do I install this library?](#installation)
 
 ## So why should I use it?
+Like said before this library helps your to increase the error handling, testability and reusability for all your MVVM driven apps. Now let's see how exactly this library will help you with all of these things!
+
+- [How does it help you with reusability?](#reusability)
+- [How does it help you with testability?](#testability)
+- [How does it help you with error handling](#error-handling):construction:
 
 ### Reusability
 
@@ -200,6 +198,17 @@ public void MainViewModel_EditErrorMessage()
 
 ### Error handling
 :construction: Under construction, coming ASAP! :construction:
+
+## Supported IoC containers
+The GuardedActions library comes with a set of providers to support some of the most commonly used of the IoC containers. Also it'll provide you with the option of creating your own IoC provider to allow you to connect GuardedActions to your favorite IoC container of choice.
+
+| IoC container | Supported |
+| ------------- | ------------- |
+| [.NET Core](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/) | :white_check_mark: |
+| [MvvmCross](https://www.mvvmcross.com/) | :white_check_mark: |
+| [Unity](http://unitycontainer.org/) | :construction: |
+| [Autofac](https://autofac.org/) | :construction: |
+| Custom ([read more](#custom)) | :white_check_mark: |
 
 ## Installation
 
