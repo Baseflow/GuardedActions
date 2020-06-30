@@ -6,7 +6,7 @@ A library to :rocket: increase the :x: error handling, :test_tube: testability a
 - [How do I install this library?](#installation)
 
 ## So why should I use it?
-Like said before this library helps your to increase the error handling, testability and reusability for all your MVVM driven apps. Now let's see how exactly this library will help you with all of these things!
+Like said before this library helps your to increase the error handling, testability and reusability of all of your MVVM driven apps. Now let's see how exactly this library will help you with all of these things!
 
 - [How does it help you with reusability?](#reusability)
 - [How does it help you with testability?](#testability)
