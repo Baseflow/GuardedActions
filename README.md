@@ -4,6 +4,7 @@ A library to :rocket: increase the :x: error handling, :test_tube: testability a
 - [Why should I use it?](#so-why-should-i-use-it)
 - [Which IoC containers are supported?](#supported-ioc-containers)
 - [How do I install this library?](#installation)
+- [Where can I find some sample projects?](https://github.com/Baseflow/GuardedActions.Samples)
 
 ## So why should I use it?
 Like said before this library helps your to increase the error handling, testability and reusability of all of your MVVM driven apps. Now let's see how exactly this library will help you with all of these things!
