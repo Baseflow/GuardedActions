@@ -36,17 +36,17 @@ namespace GuardedActions.Commands
                 if (job == null)
                     throw new InvalidOperationException($"{GetType().FullName}.{nameof(Guard)}(): The {nameof(job)} provided cannot be null.");
 
-                await job().ConfigureAwait(false);
+                await job();
             }
             catch (Exception exception)
             {
-                await HandleException(sender, exception).ConfigureAwait(false);
+                await HandleException(sender, exception);
             }
             finally
             {
                 if (onFinally != null)
                 {
-                    await onFinally().ConfigureAwait(false);
+                    await onFinally();
                 }
             }
         }
@@ -59,17 +59,17 @@ namespace GuardedActions.Commands
                 if (job == null)
                     throw new InvalidOperationException($"{GetType().FullName}.{nameof(Guard)}<{nameof(TResult)}>(): The {nameof(job)} provided cannot be null.");
 
-                result = await job().ConfigureAwait(false);
+                result = await job();
             }
             catch (Exception exception)
             {
-                await HandleException(sender, exception).ConfigureAwait(false);
+                await HandleException(sender, exception);
             }
             finally
             {
                 if (onFinally != null)
                 {
-                    await onFinally().ConfigureAwait(false);
+                    await onFinally();
                 }
             }
 
@@ -89,10 +89,10 @@ namespace GuardedActions.Commands
 
             foreach (var exceptionHandler in DetermineHandlersToUse(fallbackHandler, defaultHandlers, customHandlers, skipDefaultHandlers))
             {
-                if (!await exceptionHandler.CanHandle(exceptionHandlingAction).ConfigureAwait(false))
+                if (!await exceptionHandler.CanHandle(exceptionHandlingAction))
                     continue;
 
-                await exceptionHandler.Handle(exceptionHandlingAction).ConfigureAwait(false);
+                await exceptionHandler.Handle(exceptionHandlingAction);
 
                 if (exceptionHandlingAction.HandlingShouldFinish)
                     break;

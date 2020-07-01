@@ -75,12 +75,12 @@ namespace GuardedActions.Commands
 
                     while (InvokeBeforeCommandExecutedTaskQueue.Count > 0)
                     {
-                        await Task.Run(InvokeBeforeCommandExecutedTaskQueue.Dequeue()).ConfigureAwait(false);
+                        await Task.Run(InvokeBeforeCommandExecutedTaskQueue.Dequeue());
                     }
 
                     command.RaiseCanExecuteChanged();
 
-                    await ExecuteCommandAction().ConfigureAwait(false);
+                    await ExecuteCommandAction();
                 },
                 async () =>
                 {
@@ -95,10 +95,10 @@ namespace GuardedActions.Commands
 
                     while (InvokeAfterCommandExecutedTaskQueue.Count > 0)
                     {
-                        await Task.Run(InvokeAfterCommandExecutedTaskQueue.Dequeue()).ConfigureAwait(false);
+                        await Task.Run(InvokeAfterCommandExecutedTaskQueue.Dequeue());
                     }
                 }
-            ).ConfigureAwait(false);
+            );
         }
 
         protected virtual void NotifyAboutLongOperationStarted()
@@ -172,7 +172,7 @@ namespace GuardedActions.Commands
         {
             IAsyncCommand<TCommandParameter> command = null;
 
-            command = new AsyncCommand<TCommandParameter>(async model => await BuildCommandBody(command, model).ConfigureAwait(false), p =>
+            command = new AsyncCommand<TCommandParameter>(async model => await BuildCommandBody(command, model), p =>
             {
                 if (p is TCommandParameter commandParameter)
                 {
@@ -206,12 +206,12 @@ namespace GuardedActions.Commands
 
                     while (InvokeBeforeCommandExecutedTaskQueue.Any())
                     {
-                        await Task.Run(InvokeBeforeCommandExecutedTaskQueue.Dequeue()).ConfigureAwait(false);
+                        await Task.Run(InvokeBeforeCommandExecutedTaskQueue.Dequeue());
                     }
 
                     command.RaiseCanExecuteChanged();
 
-                    await ExecuteCommandAction(model).ConfigureAwait(false);
+                    await ExecuteCommandAction(model);
                 },
                 async () =>
                 {
@@ -226,10 +226,10 @@ namespace GuardedActions.Commands
 
                     while (InvokeAfterCommandExecutedTaskQueue.Any())
                     {
-                        await Task.Run(InvokeAfterCommandExecutedTaskQueue.Dequeue()).ConfigureAwait(false);
+                        await Task.Run(InvokeAfterCommandExecutedTaskQueue.Dequeue());
                     }
                 }
-            ).ConfigureAwait(false);
+            );
         }
 
         protected virtual void NotifyAboutLongOperationStarted()
