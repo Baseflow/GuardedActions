@@ -25,9 +25,9 @@ namespace GuardedActions.Commands.Actions
         {
             await ExceptionGuard.Guard(
                 this,
-                async () => await Execute().ConfigureAwait(false),
+                async () => await Execute(),
                 ExecuteAfter
-            ).ConfigureAwait(false);
+            );
         }
 
         protected virtual Task ExecuteAfter() => Task.CompletedTask;
@@ -56,9 +56,9 @@ namespace GuardedActions.Commands.Actions
         {
             await ExceptionGuard.Guard(
                 this,
-                async () => await Execute(parameter).ConfigureAwait(false),
+                async () => await Execute(parameter),
                 ExecuteAfter
-            ).ConfigureAwait(false);
+            );
         }
 
         protected virtual Task ExecuteAfter() => Task.CompletedTask;
