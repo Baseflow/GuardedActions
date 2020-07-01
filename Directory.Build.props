@@ -16,7 +16,7 @@
     <RepositoryUrl>https://github.com/Baseflow/GuardedActions</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Product>$(AssemblyName) ($(TargetFramework))</Product>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
 
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
