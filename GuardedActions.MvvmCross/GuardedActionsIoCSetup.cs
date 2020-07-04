@@ -4,7 +4,7 @@ using MvvmCross.IoC;
 
 namespace GuardedActions.MvvmCross
 {
-    public class GuardedActionIoCSetup : IoCRegistration
+    public class GuardedActionsIoCSetup : IoCRegistration
     {
         private IMvxIoCProvider? _provider;
 
@@ -41,7 +41,7 @@ namespace GuardedActions.MvvmCross
 
         public override bool CanResolve => _provider != null;
 
-        public override string CannotRegisterErrorMessage => $"Make sure you've called the {nameof(Configure)} on the {nameof(GuardedActionIoCSetup)} before the AppStart.";
+        public override string CannotRegisterErrorMessage => $"Make sure you've called the {nameof(Configure)} on the {nameof(GuardedActionsIoCSetup)} before the AppStart.";
 
         public override string CannotResolveErrorMessage => CannotRegisterErrorMessage;
     }
