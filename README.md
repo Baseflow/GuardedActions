@@ -11,7 +11,7 @@ Like said before this library helps your to increase the error handling, testabi
 
 - [How does it help you with reusability?](#reusability)
 - [How does it help you with testability?](#testability)
-- [How does it help you with error handling](#error-handling):construction:
+- [How does it help you with error handling](#error-handling)
 
 ### Reusability
 
@@ -198,7 +198,108 @@ public void MainViewModel_EditErrorMessage()
 ```
 
 ### Error handling
-:construction: Under construction, coming ASAP! :construction:
+We all know how annoying it is when an app crashes and you've to start it again and navigate to the specific page that you were working on.. 
+
+Well, in this kind of situation the `GuardedActions` library also comes in handy! 
+
+Because the `GuardedActions` library executes your command/action code trough the `ExceptionGuard` which automatically wrappes your command or action code in a try catch block.
+
+```csharp
+public async Task Guard(object sender, Func<Task> job, Func<Task> onFinally = null)
+{
+    try
+    {
+        if (job == null)
+            throw new InvalidOperationException($"{GetType().FullName}.{nameof(Guard)}(): The {nameof(job)} provided cannot be null.");
+
+        await job();
+    }
+    catch (Exception exception)
+    {
+        await HandleException(sender, exception);
+    }
+    finally
+    {
+        if (onFinally != null)
+        {
+            await onFinally();
+        }
+    }
+}
+```
+
+And if you take a good look at the example above it contains the `HandleException` method. This method will search for valid exception handlers to handle the exception that has occured. 
+
+#### Type of exception handlers
+There are three different types of exception handlers handlers.
+
+1. Fallback
+2. Default
+3. Command/Action specific
+
+The **fallback** exception handler is the one defined in the `GuardedActions` library and will be the ExceptionHandler to use if all other handlers have been executed. *Note: it's possible to let an exception handler to stop the executution of the rest of the exception handlers.*
+
+The **default** exception handlers are the handlers that are not configured to be an action or command specific. *Note: it's possible to let an exception handler to stop the executution of the rest of the exception handlers.*
+
+```csharp
+[DefaultExceptionHandler]
+public class NotImplementedExceptionHandler : ExceptionHandler<NotImplementedException>
+{
+    private IDialogService _dialogService;
+
+    // TODO: add ability to load use DI
+    protected IDialogService DialogService => _dialogService ??= IoCRegistration.Instance.GetService<IDialogService>();
+
+    public override Task Handle(IExceptionHandlingAction<NotImplementedException> exceptionHandlingAction)
+    {
+        if (exceptionHandlingAction == null) throw new ArgumentNullException(nameof(exceptionHandlingAction));
+
+        exceptionHandlingAction.HandlingShouldFinish = true;
+
+        var message = exceptionHandlingAction?.Exception?.Message ?? "This is not implemented yet!";
+
+        return DialogService.Alert(message, "Coming soon™", "Ok, I will wait");
+    }
+}
+```
+
+The **command or action specific** exception handlers will only be resolved and handled when an error has occured in the command or action on which it's specified for. *Note: it's possible to let an exception handler to stop the executution of the rest of the exception handlers.*
+
+```csharp
+[ExceptionHandlerFor(typeof(IDownloadUrlAction))]
+public class DownloadUrlActionUriFormatExceptionHandler : ContextExceptionHandler<UriFormatException, Models.DownloadableUrl>
+{
+    public override Task Handle(IExceptionHandlingAction<UriFormatException, Models.DownloadableUrl> exceptionHandlingAction)
+    {
+        if (exceptionHandlingAction?.DataContext != null)
+        {
+            exceptionHandlingAction.DataContext.ErrorMessage = "Not an valid URL.";
+        }
+        return Task.CompletedTask;
+    }
+}
+```
+
+#### Order of execution
+The different type of exception handlers will be executed in a specific order:
+
+1. The command or action specific
+2. The default
+3. The fallback
+
+#### Stop error handlers executing
+It could be possible that an exception handler already handles everything needed and the execution of any other exception handlers will only cause duplicate data to be logged or unecessary resources to be used. 
+
+In this situation you could use the `HandlingShouldFinish` in the exception handler and it'll prevent any other exception handlers from being executed.
+
+```csharp
+public override Task Handle(IExceptionHandlingAction<Exception, Models.DownloadableUrl> exceptionHandlingAction)
+{
+    // Logic to handle the exception
+
+    exceptionHandlingAction.HandlingShouldFinish = true;
+}
+```
 
 ## Supported IoC containers
 The GuardedActions library comes with a set of providers to support some of the most commonly used of the IoC containers. Also it'll provide you with the option of creating your own IoC provider to allow you to connect GuardedActions to your favorite IoC container of choice.
