@@ -18,13 +18,10 @@ namespace GuardedActions.Commands
         protected AsyncGuardedCommandBuilder()
         {
             ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
-            //Messenger = ??
         }
 
         protected virtual bool ShouldNotifyAboutLongOperation { get; } = true;
 
-        // TODO: Find framework independent solution
-        //public IMvxMessenger Messenger { get; protected set; }
         public IExceptionGuard ExceptionGuard { get; protected set; }
 
         public IAsyncGuardedCommandBuilder EnqueueAfterCommandExecuted(Action taskToInvoke)
@@ -66,11 +63,6 @@ namespace GuardedActions.Commands
             await ExceptionGuard.Guard(this,
                 async () =>
                 {
-                    if (ShouldNotifyAboutLongOperation)
-                    {
-                        NotifyAboutLongOperationStarted();
-                    }
-
                     CommandBeingExecuted = true;
 
                     while (InvokeBeforeCommandExecutedTaskQueue.Count > 0)
@@ -84,11 +76,6 @@ namespace GuardedActions.Commands
                 },
                 async () =>
                 {
-                    if (ShouldNotifyAboutLongOperation)
-                    {
-                        NotifyAboutLongOperationFinished();
-                    }
-
                     CommandBeingExecuted = false;
                     command.RaiseCanExecuteChanged();
                     Finally();
@@ -99,18 +86,6 @@ namespace GuardedActions.Commands
                     }
                 }
             );
-        }
-
-        protected virtual void NotifyAboutLongOperationStarted()
-        {
-            // Find framework independent solution
-            //Messenger.Publish(LongRunningAsyncOperationMessage.Started(this));
-        }
-
-        protected virtual void NotifyAboutLongOperationFinished()
-        {
-            // TODO: Find framework independent solution
-            //Messenger.Publish(LongRunningAsyncOperationMessage.Finished(this));
         }
 
         protected virtual void Finally()
@@ -127,9 +102,6 @@ namespace GuardedActions.Commands
         public virtual void Dispose()
         {
             ExceptionGuard = null;
-
-            // TODO: Find framework independent solution
-            //Messenger = null;
         }
     }
 
@@ -143,11 +115,9 @@ namespace GuardedActions.Commands
         protected AsyncGuardedCommandBuilder()
         {
             ExceptionGuard = IoCRegistration.Instance.GetService<IExceptionGuard>();
-            //Messenger = ??
         }
 
         protected virtual bool ShouldNotifyAboutLongOperation { get; } = true;
-        //public IMvxMessenger Messenger { get; protected set; }
         public IExceptionGuard ExceptionGuard { get; protected set; }
 
         public IAsyncGuardedCommandBuilder<TCommandParameter> EnqueueAfterCommandExecuted(Action taskToInvoke)
@@ -197,11 +167,6 @@ namespace GuardedActions.Commands
             await ExceptionGuard.Guard(this,
                 async () =>
                 {
-                    if (ShouldNotifyAboutLongOperation)
-                    {
-                        NotifyAboutLongOperationStarted();
-                    }
-
                     CommandBeingExecuted = true;
 
                     while (InvokeBeforeCommandExecutedTaskQueue.Any())
@@ -215,11 +180,6 @@ namespace GuardedActions.Commands
                 },
                 async () =>
                 {
-                    if (ShouldNotifyAboutLongOperation)
-                    {
-                        NotifyAboutLongOperationFinished();
-                    }
-
                     CommandBeingExecuted = false;
                     command.RaiseCanExecuteChanged();
                     Finally();
@@ -230,18 +190,6 @@ namespace GuardedActions.Commands
                     }
                 }
             );
-        }
-
-        protected virtual void NotifyAboutLongOperationStarted()
-        {
-            // TODO: Find framework independent solution
-            //Messenger.Publish(LongRunningAsyncOperationMessage.Started(this));
-        }
-
-        protected virtual void NotifyAboutLongOperationFinished()
-        {
-            // TODO: Find framework independent solution
-            //Messenger.Publish(LongRunningAsyncOperationMessage.Finished(this));
         }
 
         protected virtual void Finally()
@@ -258,8 +206,6 @@ namespace GuardedActions.Commands
         public virtual void Dispose()
         {
             ExceptionGuard = null;
-            // TODO: Find framework independent solution
-            //Messenger = null;
         }
     }
 }
